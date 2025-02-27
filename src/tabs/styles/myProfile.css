@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --status-column-width: clamp(3.25rem, -0.1429rem + 16.9643vw, 8rem);
+    --date-column-width: clamp(4.75rem, 2.0714rem + 13.3929vw, 8.5rem);
+
+    --description-column-width: calc(
+      100% - var(--status-column-width) - var(--date-column-width)
+    );
+
+    @media (max-width: 246px) {
+      --description-column-width: 80px;
+    }
+  }
+}

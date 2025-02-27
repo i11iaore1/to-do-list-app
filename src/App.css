@@ -1,0 +1,84 @@
+@import url("./fonts/font-faces.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+  scrollbar-color: #497c8d #f0f0f0; /* REMOVE */
+  margin: 0px;
+  padding: 0px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+svg {
+  fill: currentColor;
+}
+
+@layer base {
+  :root {
+    /* 20rem - 64rem */
+    --bigger-font-size: 0.96rem;
+    --bigger-font-size: clamp(0.96rem, 0.4873rem + 2.3636vw, 2rem);
+    --normal-font-size: 0.88rem;
+    --normal-font-size: clamp(0.88rem, 0.6073rem + 1.3636vw, 1.48rem);
+    --smaller-font-size: 0.7rem;
+    --smaller-font-size: clamp(0.7rem, 0.48rem + 1.1vw, 1.184rem);
+
+    --gap: 5px;
+    --half-gap: calc(var(--gap) * 0.5);
+    --radius: 20px;
+    --diameter: calc(var(--radius) * 2);
+    --border-width: 2px;
+    --smaller-border-width: calc(var(--border-width) * 0.5);
+    --list-gap: calc(var(--gap) + var(--radius));
+    --card-height: calc(
+      var(--diameter) + (var(--gap) + var(--border-width)) * 2
+    );
+
+    @media (min-width: 22.5em) {
+      --radius: 30px;
+      --border-width: 3px;
+    }
+
+    @media (min-width: 48em) {
+      --gap: 10px;
+      --radius: 40px;
+      --border-width: 4px;
+    }
+  }
+}
+
+@layer components {
+  .input {
+    @apply min-w-0 w-0 p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-lt text-la text-[length:var(--normal-font-size)];
+  }
+
+  /* .hitbox:hover .button {
+    @apply bg-lf text-lt transition;
+  } */
+
+  .folded {
+    @apply max-h-[var(--card-height)];
+  }
+
+  .folded .group svg {
+    @apply rotate-180;
+  }
+}
+
+@layer utilities {
+  /* .logged {
+    display: none;
+  } */
+
+  /* .unlogged {
+    display: none;
+  } */
+}
