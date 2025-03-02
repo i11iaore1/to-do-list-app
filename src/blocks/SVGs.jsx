@@ -202,3 +202,22 @@ export function GroupSVG({ additionalStyles }) {
     </svg>
   );
 }
+
+export function CopySVG({ additionalStyles }) {
+  return (
+    <svg
+      className={additionalStyles}
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width="720pt"
+      height="880pt"
+      viewBox="0 0 720 880"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g transform="translate(0,880) scale(0.1,-0.1)">
+        <path d="M0 5400 l0 -3400 600 0 600 0 0 400 0 400 -200 0 -200 0 0 2600 0 2600 1800 0 1800 0 0 -200 0 -200 400 0 400 0 0 600 0 600 -2600 0 -2600 0 0 -3400z" />
+        <path d="M2000 3400 l0 -3400 2600 0 2600 0 0 3400 0 3400 -2600 0 -2600 0 0 -3400z m4400 0 l0 -2600 -1800 0 -1800 0 0 2600 0 2600 1800 0 1800 0 0 -2600z" />
+      </g>
+    </svg>
+  );
+}

@@ -5,21 +5,27 @@ import MyTasksTabContent from "./tabs/myTasksTab";
 import HomeTabContent from "./tabs/homeTab";
 import MyProfileTabContent from "./tabs/myProfileTab";
 import MyGroupsTabContent from "./tabs/myGroupsTab";
+import GroupTasksTabContent from "./tabs/groupTasksTab";
+import SignInTabContent from "./tabs/signInTab";
 
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
 
   const tabList = [
     { tabName: "Home", tabContent: <HomeTabContent />, logged: false },
-    { tabName: "My Tasks", tabContent: <MyTasksTabContent />, logged: true },
+    { tabName: "My tasks", tabContent: <MyTasksTabContent />, logged: true },
     {
       tabName: "My profile",
       tabContent: <MyProfileTabContent />,
       logged: true,
     },
     { tabName: "My groups", tabContent: <MyGroupsTabContent />, logged: true },
-    // { tabName: "Group tasks", tabContent: <GroupTasksTabContent />, logged: true, },
-    // { tabName: "Sign in", tabContent: <SignInTabContent />, logged: false },
+    {
+      tabName: "Group tasks",
+      tabContent: <GroupTasksTabContent />,
+      logged: true,
+    },
+    { tabName: "Sign in", tabContent: <SignInTabContent />, logged: false },
     // { tabName: "Register", tabContent: <RegisterTabContent />, logged: false },
   ];
 
