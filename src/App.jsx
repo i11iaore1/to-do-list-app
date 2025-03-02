@@ -7,6 +7,7 @@ import MyProfileTabContent from "./tabs/myProfileTab";
 import MyGroupsTabContent from "./tabs/myGroupsTab";
 import GroupTasksTabContent from "./tabs/groupTasksTab";
 import SignInTabContent from "./tabs/signInTab";
+import RegisterTabContent from "./tabs/registerTab";
 
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
@@ -26,7 +27,7 @@ function App() {
       logged: true,
     },
     { tabName: "Sign in", tabContent: <SignInTabContent />, logged: false },
-    // { tabName: "Register", tabContent: <RegisterTabContent />, logged: false },
+    { tabName: "Register", tabContent: <RegisterTabContent />, logged: false },
   ];
 
   return (

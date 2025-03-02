@@ -110,3 +110,16 @@ export function CardList({ cardObjectList }) {
     </div>
   );
 }
+
+export function ChecboxSection() {
+  return (
+    <label className="flex flex-row w-fit relative gap-x-[var(--gap)] mt-[var(--gap)] h-[var(--radius)] text-[length:var(--normal-font-size)] cursor-pointer select-none">
+      <input
+        type="checkbox"
+        className="peer appearance-none inline-grid place-content-center h-full aspect-square bg-lt checked:bg-lf border-solid border-[length:var(--border-width)] border-lf rounded-[var(--gap)] p-[var(--half-gap)] transition"
+      />
+      <div className="absolute h-full aspect-square flex justify-center items-center peer-checked:after:content-['✔'] text-lt font-bold" />
+      <span className="flex w-fit items-center text-lf">Remember me</span>
+    </label>
+  );
+}
