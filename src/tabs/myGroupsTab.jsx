@@ -7,7 +7,7 @@ import { useState } from "react";
 function GroupCard({ groupCardObject }) {
   return (
     <div className="flex flex-col aspect-square">
-      <div className="flex flex-row max-h-[var(--list-gap)] rounded-t-[50%] bg-ls">
+      <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-ls">
         <div className="flex-1 rounded-tl-[var(--gap)] px-[var(--gap)] bg-ls border-t-[length:var(--border-width)] border-l-[length:var(--border-width)] border-solid border-lf text-lf text-[length:var(--normal-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
           {groupCardObject.name}
         </div>
@@ -36,7 +36,7 @@ function DialogueWindow({ isShown, hideOverlay }) {
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
-          <div className="flex flex-row max-h-[var(--list-gap)] rounded-t-[50%] bg-ls">
+          <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-ls">
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-lf bg-ls text-lf text-[length:var(--bigger-font-size)] font-bold">
               GROUP CREATION
             </p>
@@ -91,7 +91,9 @@ function MyGroupsTabContent() {
       <DialogueWindow isShown={overlayState} hideOverlay={hideOverlay} />
       <Panel
         ButtonSearchFunction={() => console.log("Search pressed")}
+        buttonSearchToolTip={"Find group by id"}
         ButtonAddFunction={showOverlay}
+        buttonAddToolTip={"Create group"}
       />
       <div className="grid grid-cols-1 mobile:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] tablet:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] laptop:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[var(--gap)] gap-y-[var(--gap)] p-[var(--gap)] pt-0">
         {groupCardObjectList.map((groupCardObject) => (

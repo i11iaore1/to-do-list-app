@@ -39,18 +39,18 @@ function GroupDescription({ name, id, userObjectList, showAllMembersButton }) {
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between gap-x-[var(--gap)] p-[var(--gap)] bg-lf">
+      <div className="flex flex-row items-center justify-between gap-x-[var(--gap)] p-[var(--gap)] bg-lf ">
         <div className="flex-1 text-lt text-[length:var(--bigger-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
           {name}
         </div>
-        <div className="flex h-[var(--list-gap)] mobile:h-[var(--radius)] flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-la bg-lt rounded-[var(--gap)] cursor-pointer">
-          <div className="flex-row flex-1 gap-x-[var(--gap)] hidden mobile:flex text-center text-[length:var(--normal-font-size)] ">
-            <div className="select-none">ID:</div>
-            <div className="max-w-[100px] tablet:max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-la bg-lt rounded-[var(--gap)] leading-none cursor-pointer active:bg-ltd">
+          <div className="flex-row flex-1 gap-x-[var(--gap)] hidden mobile:flex text-center text-[length:var(--normal-font-size)] select-none">
+            ID:
+            <span className="max-w-[100px] tablet:max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
               {id}
-            </div>
+            </span>
           </div>
-          <CopySVG additionalStyles={"h-full w-auto"} />
+          <CopySVG additionalStyles={"h-[var(--normal-font-size)] w-auto"} />
         </div>
       </div>
       <div className="flex flex-row gap-x-[var(--gap)] p-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-lf">
@@ -103,7 +103,7 @@ function AllMembersDialogueWindow({ isShown, hideOverlay, userObjectList }) {
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col max-h-full w-full max-w-[40em] flex-shrink"
         >
-          <div className="flex flex-row max-h-[var(--list-gap)] rounded-t-[50%] bg-ls">
+          <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-ls">
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-lf bg-ls text-lf text-[length:var(--bigger-font-size)] font-bold">
               GROUP MEMBERS
             </p>
@@ -133,7 +133,7 @@ function TaskCreationDialogueWindow({ isShown, hideOverlay }) {
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
-          <div className="flex flex-row max-h-[var(--list-gap)] rounded-t-[50%] bg-ls">
+          <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-ls">
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-lf bg-ls text-lf text-[length:var(--bigger-font-size)] font-bold">
               TASK CREATION
             </p>
@@ -247,7 +247,9 @@ function GroupTasksTabContent() {
       />
       <Panel
         ButtonSearchFunction={() => console.log("Search pressed")}
+        buttonSearchToolTip={"Find task"}
         ButtonAddFunction={() => setcurrentOverlay(2)}
+        buttonAddToolTip={"Create task"}
       />
       <CardList cardObjectList={cardObjectList} />
     </>

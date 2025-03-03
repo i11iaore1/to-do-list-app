@@ -11,7 +11,7 @@
       100% - var(--status-column-width) - var(--date-column-width)
     );
 
-    @media (max-width: 246px) {
+    @media (max-width: 280px) {
       --description-column-width: 80px;
     }
   }

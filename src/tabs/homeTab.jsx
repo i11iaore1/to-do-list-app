@@ -1,17 +1,17 @@
 import { FullLogoSVG } from "../blocks/SVGs";
 
-function Title({ text }) {
+function Title({ content }) {
   return (
     <div className="mt-[var(--gap)] text-la text-[length:var(--bigger-font-size)] font-bold leading-[1.8] text-justify indent-[var(--radius)]">
-      {text}
+      {content}
     </div>
   );
 }
 
-function Description({ text }) {
+function Description({ content }) {
   return (
     <div className="text-la text-[length:var(--normal-font-size)] leading-[1.25] text-justify indent-[var(--radius)]">
-      {text}
+      {content}
     </div>
   );
 }
@@ -26,23 +26,29 @@ function HomeTabContent() {
         </div>
       </div>
       <div className="flex flex-col px-[var(--gap)] pb-[var(--gap)]">
-        <Title text={"What is this app's purpose?"} />
+        <Title content={"What is this app's purpose?"} />
         <Description
-          text={
+          content={
             "This app is created to help you noting and tracking your tasks. Manage them as you want. And also try solving shared issues by joining a group."
           }
         />
-        <Title text={"Quick guide for managing your ToDoList"} />
+        <Title content={"Quick guide for managing your ToDoList"} />
         <Description
-          text={'Use "My tasks" tab to managing your individual tasks.'}
+          content={'Use "My tasks" tab to managing your individual tasks.'}
         />
         <Description
-          text={
-            "The black line indicates the due date of the task. The dark blue line indicates the end time. Deadline dates and times are listed from top to bottom in ascending order."
+          content={
+            <p>
+              The <span className="text-la font-bold">black</span> line
+              indicates the due date of the task. The{" "}
+              <span className="text-lf font-bold">dark blue</span> line
+              indicates the end time. Deadline dates and times are listed from
+              top to bottom in ascending order.
+            </p>
           }
         />
         <Description
-          text={
+          content={
             "Each task is presented as a card with its short name. When you press the button with a check mark, the corresponding task will be considered completed and will disappear from the list. When the deadline expires, the task will be considered overdue and will also disappear from the list."
           }
         />

@@ -11,6 +11,7 @@ export default {
         lfb: "#5c8999", //first-brighter (achieved with transparent white)
         ls: "#add8e6",
         lt: "#f0f0f0",
+        ltd: "#e0e0e0", //third-darker
         la: "#0c0c0c",
 
         // dark theme

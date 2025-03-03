@@ -130,10 +130,10 @@ export function OptionsSVG() {
   );
 }
 
-export function DropDownSVG() {
+export function DropDownSVG({ styles }) {
   return (
     <svg
-      className="h-full w-auto"
+      className={styles}
       version="1.1"
       viewBox="0 0 2048 986"
       width="220"

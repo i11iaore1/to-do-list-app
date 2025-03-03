@@ -11,23 +11,61 @@ import RegisterTabContent from "./tabs/registerTab";
 
 function App() {
   const [currentTab, setCurrentTab] = useState(0);
+  const [isLogged, setIsLogged] = useState(false);
+
+  function openTab(tabIndex) {
+    setCurrentTab(tabIndex);
+    window.scrollTo(0, 0);
+  }
 
   const tabList = [
-    { tabName: "Home", tabContent: <HomeTabContent />, logged: false },
-    { tabName: "My tasks", tabContent: <MyTasksTabContent />, logged: true },
+    { tabName: "Home", tabContent: <HomeTabContent />, isDisplayed: true },
+    {
+      tabName: "My tasks",
+      tabContent: <MyTasksTabContent />,
+      isDisplayed: isLogged,
+    },
     {
       tabName: "My profile",
       tabContent: <MyProfileTabContent />,
-      logged: true,
+      isDisplayed: isLogged,
     },
-    { tabName: "My groups", tabContent: <MyGroupsTabContent />, logged: true },
+    {
+      tabName: "My groups",
+      tabContent: <MyGroupsTabContent />,
+      isDisplayed: isLogged,
+    },
     {
       tabName: "Group tasks",
       tabContent: <GroupTasksTabContent />,
-      logged: true,
+      isDisplayed: isLogged,
     },
-    { tabName: "Sign in", tabContent: <SignInTabContent />, logged: false },
-    { tabName: "Register", tabContent: <RegisterTabContent />, logged: false },
+    {
+      tabName: "Sign in",
+      tabContent: (
+        <SignInTabContent
+          logIn={() => {
+            setIsLogged(true);
+            openTab(1);
+          }}
+          registerRedirect={() => openTab(6)}
+        />
+      ),
+      isDisplayed: !isLogged,
+    },
+    {
+      tabName: "Register",
+      tabContent: (
+        <RegisterTabContent
+          logIn={() => {
+            setIsLogged(true);
+            openTab(1);
+          }}
+          signInRedirect={() => openTab(5)}
+        />
+      ),
+      isDisplayed: !isLogged,
+    },
   ];
 
   return (
@@ -35,7 +73,7 @@ function App() {
       <Wrapper
         content={
           <>
-            <Header tabList={tabList} setCurrentTab={setCurrentTab} />
+            <Header tabList={tabList} openTab={openTab} />
             {tabList[currentTab].tabContent}
           </>
         }

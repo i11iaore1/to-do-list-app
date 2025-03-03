@@ -7,7 +7,12 @@ import {
   ButtonDropDown,
 } from "./buttons";
 
-export function Panel({ ButtonSearchFunction, ButtonAddFunction }) {
+export function Panel({
+  ButtonSearchFunction,
+  buttonSearchToolTip,
+  ButtonAddFunction,
+  buttonAddToolTip,
+}) {
   return (
     <div className="sticky top-[var(--diameter)] inset-x-0 z-40 flex flex-row gap-x-[var(--gap)] p-[var(--gap)] mb-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-lf bg-ls">
       <div className="flex flex-row flex-1">
@@ -16,9 +21,12 @@ export function Panel({ ButtonSearchFunction, ButtonAddFunction }) {
           placeholder="Search"
           className="input border-r-0 rounded-r-[0] flex-1"
         />
-        <ButtonSearch onClick={ButtonSearchFunction} />
+        <ButtonSearch
+          onClick={ButtonSearchFunction}
+          tooltip={buttonSearchToolTip}
+        />
       </div>
-      <ButtonAdd onClick={ButtonAddFunction} />
+      <ButtonAdd onClick={ButtonAddFunction} tooltip={buttonAddToolTip} />
     </div>
   );
 }
@@ -43,21 +51,15 @@ function TimeDash({ time }) {
   );
 }
 
-function Card({ taskName, taskDescription }) {
-  const [dropState, setDropState] = useState(false);
+function Card({ taskName, taskDescription = "" }) {
+  const [isDropped, setIsDropped] = useState(false);
 
   function handleClick() {
-    setDropState(!dropState);
+    setIsDropped(!isDropped);
   }
 
   return (
-    <div
-      className={
-        dropState
-          ? "relative flex mb-[var(--list-gap)]"
-          : "folded relative flex mb-[var(--list-gap)]"
-      }
-    >
+    <div className="relative flex flex-col mb-[var(--gap)]">
       <div className="relative flex flex-col overflow-hidden w-full rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-ls p-[var(--gap)]">
         <div className="flex flex-row gap-x-[var(--gap)] h-[var(--diameter)]">
           <ButtonComplete onClick={() => console.log("Complete pressed")} />
@@ -68,11 +70,20 @@ function Card({ taskName, taskDescription }) {
           </div>
           <ButtonShowOptions onClick={() => console.log("Show pressed")} />
         </div>
-        <p className="overflow-y-auto break-words m-0 mt-[var(--gap)] p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-lt text-la text-[length:var(--normal-font-size)]">
-          {taskDescription}
-        </p>
+        {taskDescription && (
+          <p
+            className={
+              "overflow-y-auto break-words m-0 mt-[var(--gap)] p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-lt text-la text-[length:var(--normal-font-size)]" +
+              (isDropped ? "" : " hidden")
+            }
+          >
+            {taskDescription}
+          </p>
+        )}
       </div>
-      <ButtonDropDown onClick={handleClick} />
+      {taskDescription && (
+        <ButtonDropDown onClick={handleClick} isDropped={isDropped} />
+      )}
     </div>
   );
 }
@@ -91,20 +102,14 @@ export function CardList({ cardObjectList }) {
         currentTime = cardObject.time;
 
         return (
-          <>
+          <div key={cardObject.id}>
             {!isSameDate && <DateDash date={cardObject.date} />}
-            {!isSameTime && (
-              <TimeDash
-                // key={cardObject.date + "_" + cardObject.time}
-                time={cardObject.time}
-              />
-            )}
+            {!isSameTime && <TimeDash time={cardObject.time} />}
             <Card
-              key={cardObject.id}
               taskName={cardObject.taskName}
               taskDescription={cardObject.taskDescription}
             />
-          </>
+          </div>
         );
       })}
     </div>

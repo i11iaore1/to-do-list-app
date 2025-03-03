@@ -34,13 +34,9 @@ svg {
     --gap: 5px;
     --half-gap: calc(var(--gap) * 0.5);
     --radius: 20px;
+    --bigger-radius: calc(var(--radius) * 1.5);
     --diameter: calc(var(--radius) * 2);
     --border-width: 2px;
-    --smaller-border-width: calc(var(--border-width) * 0.5);
-    --list-gap: calc(var(--gap) + var(--radius));
-    --card-height: calc(
-      var(--diameter) + (var(--gap) + var(--border-width)) * 2
-    );
 
     @media (min-width: 22.5em) {
       --radius: 30px;
@@ -59,26 +55,4 @@ svg {
   .input {
     @apply min-w-0 w-0 p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-lt text-la text-[length:var(--normal-font-size)];
   }
-
-  /* .hitbox:hover .button {
-    @apply bg-lf text-lt transition;
-  } */
-
-  .folded {
-    @apply max-h-[var(--card-height)];
-  }
-
-  .folded .group svg {
-    @apply rotate-180;
-  }
-}
-
-@layer utilities {
-  /* .logged {
-    display: none;
-  } */
-
-  /* .unlogged {
-    display: none;
-  } */
 }

@@ -15,7 +15,7 @@ export function TabButton({ onClick, content, additionalStyles = "" }) {
   );
 }
 
-export function Header({ tabList, setCurrentTab }) {
+export function Header({ tabList, openTab }) {
   const [smallNavState, setSmallNavState] = useState(false);
 
   function toggleSmallNav() {
@@ -39,10 +39,10 @@ export function Header({ tabList, setCurrentTab }) {
           return (
             <TabButton
               key={"f-" + index}
-              onClick={() => setCurrentTab(index)}
+              onClick={() => openTab(index)}
               content={tabObject.tabName}
               additionalStyles={
-                "p-[var(--gap)] " + (tabObject.logged ? "logged" : "unlogged")
+                "p-[var(--gap)]" + (tabObject.isDisplayed ? "" : " hidden")
               }
             />
           );
@@ -67,11 +67,11 @@ export function Header({ tabList, setCurrentTab }) {
             return (
               <TabButton
                 key={"s-" + index}
-                onClick={() => setCurrentTab(index)}
+                onClick={() => openTab(index)}
                 content={tabObject.tabName}
                 additionalStyles={
                   "p-[var(--gap)] rounded-[var(--gap)] " +
-                  (tabObject.logged ? "logged" : "unlogged")
+                  (tabObject.isDisplayed ? "" : " hidden")
                 }
               />
             );
@@ -96,7 +96,7 @@ export function Footer() {
       </p>
       <a
         href="https://github.com/i11iaore1"
-        className="h-[var(--list-gap)] text-lf active:text-lfb text-[length:var(--normal-font-size)] leading-[1] underline"
+        className="h-[var(--bigger-radius)] text-lf active:text-lfb text-[length:var(--normal-font-size)] leading-[1] underline"
       >
         <GitHubSVG />
       </a>
