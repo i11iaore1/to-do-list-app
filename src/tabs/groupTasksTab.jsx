@@ -43,7 +43,7 @@ function GroupDescription({ name, id, userObjectList, showAllMembersButton }) {
         <div className="flex-1 text-lt text-[length:var(--bigger-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
           {name}
         </div>
-        <div className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-la bg-lt rounded-[var(--gap)] leading-none cursor-pointer active:bg-ltd">
+        <div className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-la bg-lt rounded-[var(--gap)] leading-none cursor-pointer active:bg-ltd transition">
           <div className="flex-row flex-1 gap-x-[var(--gap)] hidden mobile:flex text-center text-[length:var(--normal-font-size)] select-none">
             ID:
             <span className="max-w-[100px] tablet:max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -63,7 +63,7 @@ function GroupDescription({ name, id, userObjectList, showAllMembersButton }) {
           ))}
         </div>
         {allMembersButtonState && (
-          <div className="relative pl-[var(--gap)] flex items-center justify-center">
+          <div className="relative py-[var(--gap)] pl-[var(--gap)] flex items-center justify-center">
             <div className="absolute right-[calc(100%+var(--gap))] inset-y-0 bg-[linear-gradient(90deg,#f0f0f000,#f0f0f0ff)] w-[var(--diameter)]"></div>
             <div
               onClick={showAllMembersButton}
@@ -246,9 +246,9 @@ function GroupTasksTabContent() {
         showAllMembersButton={() => setcurrentOverlay(1)}
       />
       <Panel
-        ButtonSearchFunction={() => console.log("Search pressed")}
+        buttonSearchFunction={() => console.log("Search pressed")}
         buttonSearchToolTip={"Find task"}
-        ButtonAddFunction={() => setcurrentOverlay(2)}
+        buttonAddFunction={() => setcurrentOverlay(2)}
         buttonAddToolTip={"Create task"}
       />
       <CardList cardObjectList={cardObjectList} />

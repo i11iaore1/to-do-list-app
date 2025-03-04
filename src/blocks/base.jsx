@@ -89,7 +89,7 @@ export function Wrapper({ content }) {
 export function Footer() {
   return (
     <div className="flex flex-row gap-x-[var(--gap)] items-center justify-between p-[var(--gap)] pb-[var(--radius)] bg-ls border-t-[length:var(--border-width)] border-lf border-solid]">
-      <p className="text-lf text-[length:var(--normal-font-size)] font-bold leading-[1.25]">
+      <p className="text-lf text-[length:var(--normal-font-size)] font-bold leading-[1.25] select-none">
         Created by
         <br />
         Orel Illia in 2025

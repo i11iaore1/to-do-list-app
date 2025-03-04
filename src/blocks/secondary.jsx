@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ButtonSearch,
   ButtonAdd,
@@ -8,9 +8,9 @@ import {
 } from "./buttons";
 
 export function Panel({
-  ButtonSearchFunction,
+  buttonSearchFunction,
   buttonSearchToolTip,
-  ButtonAddFunction,
+  buttonAddFunction,
   buttonAddToolTip,
 }) {
   return (
@@ -22,11 +22,11 @@ export function Panel({
           className="input border-r-0 rounded-r-[0] flex-1"
         />
         <ButtonSearch
-          onClick={ButtonSearchFunction}
+          onClick={buttonSearchFunction}
           tooltip={buttonSearchToolTip}
         />
       </div>
-      <ButtonAdd onClick={ButtonAddFunction} tooltip={buttonAddToolTip} />
+      <ButtonAdd onClick={buttonAddFunction} tooltip={buttonAddToolTip} />
     </div>
   );
 }
@@ -43,7 +43,7 @@ function DateDash({ date }) {
 
 function TimeDash({ time }) {
   return (
-    <div className="flex flex-row gap-x-[var(--gap)] w-full justify-center items-center mb-[var(--gap)] px-[var(--radius)] text-lf text-[length:var(--smaller-font-size)] font-bold leading-none">
+    <div className="flex flex-row gap-x-[var(--gap)] w-full justify-center items-center mb-[var(--gap)] text-lf text-[length:var(--smaller-font-size)] font-bold leading-none">
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-lf"></div>
       <p>{time}</p>
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-lf"></div>
@@ -51,7 +51,12 @@ function TimeDash({ time }) {
   );
 }
 
-function Card({ taskName, taskDescription = "" }) {
+function Card({
+  taskName,
+  taskDescription = "",
+  deleteButtonFunction,
+  editButtonFunction,
+}) {
   const [isDropped, setIsDropped] = useState(false);
 
   function handleClick() {
@@ -59,16 +64,31 @@ function Card({ taskName, taskDescription = "" }) {
   }
 
   return (
-    <div className="relative flex flex-col mb-[var(--gap)]">
-      <div className="relative flex flex-col overflow-hidden w-full rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-ls p-[var(--gap)]">
+    <div className="flex flex-col mb-[var(--gap)]">
+      <div className="flex flex-col w-full rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-ls p-[var(--gap)]">
         <div className="flex flex-row gap-x-[var(--gap)] h-[var(--diameter)]">
-          <ButtonComplete onClick={() => console.log("Complete pressed")} />
+          <ButtonComplete
+            additionalStyles={"aspect-square h-full "}
+            onClick={() => console.log("Complete pressed")}
+            tooltip="Complete task"
+          />
           <div className="flex-1 content-center m-0 overflow-hidden whitespace-nowrap text-lf">
             <p className="w-fit max-w-full m-0 text-[length:var(--bigger-font-size)] font-bold">
               {taskName}
             </p>
           </div>
-          <ButtonShowOptions onClick={() => console.log("Show pressed")} />
+          <ButtonShowOptions
+            options={[
+              {
+                optionName: "Edit",
+                optionFunction: editButtonFunction,
+              },
+              {
+                optionName: "Delete",
+                optionFunction: deleteButtonFunction,
+              },
+            ]}
+          />
         </div>
         {taskDescription && (
           <p
@@ -88,30 +108,40 @@ function Card({ taskName, taskDescription = "" }) {
   );
 }
 
-export function CardList({ cardObjectList }) {
+export function CardList({ cardObjectList, handleDelete, handleEdit }) {
+  const isNotEmpty = cardObjectList.length !== 0;
+
   let currentDate = null;
   let currentTime = null;
 
   return (
     <div className="flex flex-col px-[var(--gap)]">
-      {cardObjectList.map((cardObject) => {
-        const isSameDate = currentDate == cardObject.date;
-        currentDate = cardObject.date;
+      {isNotEmpty ? (
+        cardObjectList.map((cardObject) => {
+          const isSameDate = currentDate == cardObject.date;
+          currentDate = cardObject.date;
 
-        const isSameTime = currentTime == cardObject.time && isSameDate;
-        currentTime = cardObject.time;
+          const isSameTime = currentTime == cardObject.time && isSameDate;
+          currentTime = cardObject.time;
 
-        return (
-          <div key={cardObject.id}>
-            {!isSameDate && <DateDash date={cardObject.date} />}
-            {!isSameTime && <TimeDash time={cardObject.time} />}
-            <Card
-              taskName={cardObject.taskName}
-              taskDescription={cardObject.taskDescription}
-            />
-          </div>
-        );
-      })}
+          return (
+            <div key={cardObject.id}>
+              {!isSameDate && <DateDash date={cardObject.date} />}
+              {!isSameTime && <TimeDash time={cardObject.time} />}
+              <Card
+                taskName={cardObject.taskName}
+                taskDescription={cardObject.taskDescription}
+                deleteButtonFunction={() => handleDelete(cardObject.id)}
+                editButtonFunction={() => handleEdit(cardObject.id)}
+              />
+            </div>
+          );
+        })
+      ) : (
+        <div className="p-[var(--gap)] text-la text-[length:var(--bigger-font-size)] text-center">
+          It seems you are out of tasks.
+        </div>
+      )}
     </div>
   );
 }

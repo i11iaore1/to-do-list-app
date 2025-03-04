@@ -7,9 +7,12 @@ import {
   DropDownSVG,
 } from "./SVGs";
 
-function Button({ onClick, additionalStyles, content, tooltip }) {
+import { useState, useEffect, useRef } from "react";
+
+function Button({ onClick, additionalStyles, content, tooltip, ref }) {
   return (
     <button
+      ref={ref}
       title={tooltip}
       onClick={onClick}
       className={
@@ -62,29 +65,69 @@ export function ButtonClose({ onClick }) {
   );
 }
 
-export function ButtonComplete(onClick) {
+export function ButtonComplete({ additionalStyles, onClick, tooltip }) {
   return (
     <Button
       onClick={onClick}
       additionalStyles={
-        "aspect-square h-full rounded-[var(--gap)] hover:bg-lf active:bg-lfb active:border-lfb"
+        "rounded-[var(--gap)] hover:bg-lf active:bg-lfb active:border-lfb " +
+        additionalStyles
       }
       content={<CheckSVG />}
-      tooltip="Complete task"
+      tooltip={tooltip}
     />
   );
 }
 
-export function ButtonShowOptions(onClick) {
-  return (
-    <Button
-      onClick={onClick}
-      additionalStyles={
-        "aspect-square h-full rounded-[var(--gap)] hover:bg-lf active:bg-lfb active:border-lfb"
+export function ButtonShowOptions({ options }) {
+  const [isShown, setIsShown] = useState(false);
+  const dropDownRef = useRef(null);
+  const buttonRef = useRef(null);
+
+  useEffect(() => {
+    function handleClick(event) {
+      if (dropDownRef.current && !buttonRef.current.contains(event.target)) {
+        setIsShown(false);
       }
-      content={<OptionsSVG />}
-      tooltip="Show options"
-    />
+    }
+
+    if (isShown) {
+      document.addEventListener("click", handleClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, [isShown]);
+
+  return (
+    <div className="relative inline-block">
+      <Button
+        ref={buttonRef}
+        onClick={() => setIsShown(!isShown)}
+        additionalStyles={
+          "aspect-square h-full rounded-[var(--gap)] hover:bg-lf active:bg-lfb active:border-lfb"
+        }
+        content={<OptionsSVG />}
+        tooltip={isShown ? "Hide options" : "Show options"}
+      />
+      {isShown && (
+        <div
+          ref={dropDownRef}
+          className="absolute right-full top-0 bg-lt rounded-[var(--gap)] overflow-hidden"
+        >
+          {options.map((option, id) => (
+            <button
+              key={id}
+              className="block w-full px-[var(--gap)] py-[var(--half-gap)] text-center text-[length:var(--normal-font-size)] text-la hover:bg-lf hover:text-lt active:bg-lfb active:text-lt transition"
+              onClick={option.optionFunction}
+            >
+              {option.optionName}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

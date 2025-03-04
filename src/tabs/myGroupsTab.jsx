@@ -90,9 +90,9 @@ function MyGroupsTabContent() {
     <>
       <DialogueWindow isShown={overlayState} hideOverlay={hideOverlay} />
       <Panel
-        ButtonSearchFunction={() => console.log("Search pressed")}
+        buttonSearchFunction={() => console.log("Search pressed")}
         buttonSearchToolTip={"Find group by id"}
-        ButtonAddFunction={showOverlay}
+        buttonAddFunction={showOverlay}
         buttonAddToolTip={"Create group"}
       />
       <div className="grid grid-cols-1 mobile:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] tablet:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] laptop:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[var(--gap)] gap-y-[var(--gap)] p-[var(--gap)] pt-0">
