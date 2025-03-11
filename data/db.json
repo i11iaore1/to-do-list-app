@@ -1,0 +1,116 @@
+{
+  "groups": [
+    {
+      "id": 1,
+      "name": "First Group",
+      "members": [1, 2],
+      "tasks": [3, 4]
+    },
+    {
+      "id": 2,
+      "name": "Second Group",
+      "members": [3, 4],
+      "tasks": [7, 8]
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "email": "alice@gmail.com",
+      "sex": "female",
+      "birth_date": "15.07.2000",
+      "tasks": [1]
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "email": "bob@gmail.com",
+      "sex": "male",
+      "birth_date": "20.03.1998",
+      "tasks": [2, 5]
+    },
+    {
+      "id": 3,
+      "name": "Charlie",
+      "email": "charlie@gmail.com",
+      "sex": "male",
+      "birth_date": "05.11.1995",
+      "tasks": []
+    },
+    {
+      "id": 4,
+      "name": "Diana",
+      "email": "diana@gmail.com",
+      "sex": "female",
+      "birth_date": "23.09.2002",
+      "tasks": [6]
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Task 1",
+      "description": "Complete project report",
+      "date": "05.12.2024",
+      "time": "10:00",
+      "state": 1
+    },
+    {
+      "id": 2,
+      "name": "Task 2",
+      "description": "Review pull requests",
+      "date": "06.12.2024",
+      "time": "14:00",
+      "state": 0
+    },
+    {
+      "id": 3,
+      "name": "Task 3",
+      "description": "Prepare presentation",
+      "date": "07.12.2024",
+      "time": "09:30",
+      "state": 1
+    },
+    {
+      "id": 4,
+      "name": "Task 4",
+      "description": "Fix critical bugs",
+      "date": "08.12.2024",
+      "time": "12:15",
+      "state": 0
+    },
+    {
+      "id": 5,
+      "name": "Task 5",
+      "description": "Write documentation",
+      "date": "09.12.2024",
+      "time": "15:45",
+      "state": 1
+    },
+    {
+      "id": 6,
+      "name": "Task 6",
+      "description": "Organize team meeting",
+      "date": "10.12.2024",
+      "time": "11:00",
+      "state": 0
+    },
+    {
+      "id": 7,
+      "name": "Task 7",
+      "description": "Refactor old code",
+      "date": "11.12.2024",
+      "time": "13:20",
+      "state": 1
+    },
+    {
+      "id": 8,
+      "name": "Task 8",
+      "description": "Update dependencies",
+      "date": "12.12.2024",
+      "time": "16:30",
+      "state": 0
+    }
+  ]
+}

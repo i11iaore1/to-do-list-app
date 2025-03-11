@@ -6,7 +6,6 @@
 
 * {
   font-family: Roboto, Arial, Helvetica, sans-serif;
-  scrollbar-color: #497c8d #f0f0f0; /* REMOVE */
   margin: 0px;
   padding: 0px;
 }
@@ -51,8 +50,51 @@ svg {
   }
 }
 
+.light {
+  --first: 73, 124, 141;
+  --first-interactive: 92, 137, 153;
+  --second: 173, 216, 230;
+  --third: 240, 240, 240;
+  --third-interactive: 224, 224, 224;
+  --accent: 12, 12, 12;
+  --placeholder: 170, 170, 170;
+
+  --third-accent: var(--third);
+  --third-first: var(--third);
+  --third-second: var(--third);
+  --second-third: var(--second);
+  --first-accent: var(--first);
+  --first-accent-interactive: var(--first-interactive);
+  --accent-second: var(--accent);
+
+  --first-date: var(--first);
+}
+
+.dark {
+  --first: 12, 12, 12;
+  --first-interactive: 24, 24, 24;
+  --second: 70, 70, 70;
+  --third: 90, 90, 90;
+  --third-interactive: 102, 102, 102;
+  --accent: 240, 240, 240;
+  --accent-interactive: 224, 224, 224;
+  --placeholder: 170, 170, 170;
+
+  --date: 173, 216, 230;
+
+  --third-accent: var(--accent);
+  --third-first: var(--first);
+  --third-second: var(--second);
+  --second-third: var(--third);
+  --first-accent: var(--accent);
+  --first-accent-interactive: var(--accent-interactive);
+  --accent-second: var(--second);
+
+  --first-date: var(--date);
+}
+
 @layer components {
   .input {
-    @apply min-w-0 w-0 p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-lf bg-lt text-la text-[length:var(--normal-font-size)];
+    @apply outline-none min-w-0 w-0 p-[var(--gap)] rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-first bg-third text-accent text-[length:var(--normal-font-size)] placeholder:text-placeholder;
   }
 }

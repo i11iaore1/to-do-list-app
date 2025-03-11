@@ -2,7 +2,7 @@ import { FullLogoSVG } from "../blocks/SVGs";
 
 function Title({ content }) {
   return (
-    <div className="mt-[var(--gap)] text-la text-[length:var(--bigger-font-size)] font-bold leading-[1.8] text-justify indent-[var(--radius)]">
+    <div className="mt-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] font-bold leading-[1.8] text-justify indent-[var(--radius)]">
       {content}
     </div>
   );
@@ -10,7 +10,7 @@ function Title({ content }) {
 
 function Description({ content }) {
   return (
-    <div className="text-la text-[length:var(--normal-font-size)] leading-[1.25] text-justify indent-[var(--radius)]">
+    <div className="text-accent text-[length:var(--normal-font-size)] leading-[1.25] text-justify indent-[var(--radius)]">
       {content}
     </div>
   );
@@ -19,9 +19,9 @@ function Description({ content }) {
 function HomeTabContent() {
   return (
     <>
-      <div className="flex flex-col gap-y-[var(--gap)] justify-center items-center w-full max-h-[calc(100vh-var(--diameter))] tablet:h-[calc(100vh-var(--diameter))] p-[var(--radius)] bg-ls">
-        <FullLogoSVG additionalStyles={"max-w-full h-auto text-lf"} />
-        <div className="text-lf text-[length:var(--bigger-font-size)] font-bold text-center select-none">
+      <div className="flex flex-col gap-y-[var(--gap)] justify-center items-center w-full max-h-[calc(100vh-var(--diameter))] tablet:h-[calc(100vh-var(--diameter))] p-[var(--radius)] bg-[linear-gradient(0deg,rgba(var(--second)),rgba(var(--first)))] text-ta">
+        <FullLogoSVG additionalStyles={"max-w-full h-auto "} />
+        <div className="text-[length:var(--bigger-font-size)] font-bold text-center select-none">
           Everything you need to remember!
         </div>
       </div>
@@ -34,14 +34,14 @@ function HomeTabContent() {
         />
         <Title content={"Quick guide for managing your ToDoList"} />
         <Description
-          content={'Use "My tasks" tab to managing your individual tasks.'}
+          content={'Use "My tasks" tab for managing your individual tasks.'}
         />
         <Description
           content={
             <p>
-              The <span className="text-la font-bold">black</span> line
+              The <span className="text-accent font-bold">black</span> line
               indicates the due date of the task. The{" "}
-              <span className="text-lf font-bold">dark blue</span> line
+              <span className="text-first font-bold">dark blue</span> line
               indicates the end time. Deadline dates and times are listed from
               top to bottom in ascending order.
             </p>

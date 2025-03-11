@@ -5,30 +5,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        // first, second, third and accent colors
-        // light theme
-        lf: "#497c8d",
-        lfb: "#5c8999", //first-brighter (achieved with transparent white)
-        ls: "#add8e6",
-        lt: "#f0f0f0",
-        ltd: "#e0e0e0", //third-darker
-        la: "#0c0c0c",
+        first: "rgba(var(--first))",
+        fint: "rgba(var(--first-interactive))",
+        second: "rgba(var(--second))",
+        third: "rgba(var(--third))",
+        tint: "rgba(var(--third-interactive))",
+        accent: "rgba(var(--accent))",
+        placeholder: "rgba(var(--placeholder))",
+        overlay: "#00000080",
 
-        // dark theme
-        df: "#0c0c0c",
-        ds: "#333333",
-        dt: "#464646",
-        da: "#f0f0f0",
+        ta: "rgba(var(--third-accent))",
+        tf: "rgba(var(--third-first))",
+        ts: "rgba(var(--third-second))",
+        st: "rgba(var(--second-third))",
+        fa: "rgba(var(--first-accent))",
+        fai: "rgba(var(--first-accent-interactive))",
+        as: "rgba(var(--accent-second))",
 
-        // overlay color
-        lo: "#00000080",
-
-        //red for burrons
-        lr: "#ff0000",
-        dr: "#990000",
-
-        // transparent white
-        tw: "#FFFFFF1A",
+        fd: "rgba(var(--first-date))",
       },
       screens: {
         mobile: "20em",
