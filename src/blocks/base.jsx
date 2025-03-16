@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { FullLogoSVG } from "./SVGs";
+import { ThemeContext } from "../App";
 
 export function TabButton({ onClick, content, additionalStyles }) {
   return (
     <div
       onClick={onClick}
       className={
-        "flex justify-center items-center h-full text-ta hover:bg-fint active:bg-fint transition text-[length:var(--normal-font-size)] font-bold cursor-pointer select-none " +
+        "flex justify-center items-center h-full text-ta  cursor:hover:bg-fint active:bg-fint  text-[length:var(--normal-font-size)] font-bold cursor-pointer select-none " +
         additionalStyles
       }
     >
@@ -19,6 +20,8 @@ export function TabButton({ onClick, content, additionalStyles }) {
 export function Header({ tabList }) {
   const [smallNavState, setSmallNavState] = useState(false);
 
+  const { theme, setTheme } = useContext(ThemeContext);
+
   function toggleSmallNav() {
     setSmallNavState(!smallNavState);
   }
@@ -28,29 +31,27 @@ export function Header({ tabList }) {
   }
 
   function switchTheme() {
-    const body = document.getElementById("body");
-    if (body.classList.contains("light")) {
-      body.classList.remove("light");
-      body.classList.add("dark");
-    } else {
-      body.classList.remove("dark");
-      body.classList.add("light");
-    }
+    setTheme((prevTheme) => {
+      const newTheme = !prevTheme;
+      document.body.className = newTheme ? "dark" : "light";
+      localStorage.setItem("theme", JSON.stringify(newTheme));
+      return newTheme;
+    });
   }
 
   return (
     <div className="sticky z-50 top-0 inset-x-0 flex flex-row gap-x-[var(--gap)] items-center justify-between h-[var(--diameter)] bg-first">
-      <a
-        href="index.html"
+      <Link
+        to={"/"}
         className="h-full w-auto py-[var(--gap)] pl-[var(--gap)] cursor-pointer"
       >
         <FullLogoSVG additionalStyles={"h-full w-auto text-ta"} />
-      </a>
+      </Link>
       <div className="h-full flex flex-row">
         <div
           title="Switch theme"
           onClick={switchTheme}
-          className="h-full aspect-square hover:bg-fint active:bg-fint text-ta p-[var(--gap)] cursor-pointer transition"
+          className="h-full aspect-square cursor:hover:bg-fint active:bg-fint text-ta p-[var(--gap)] cursor-pointer "
         >
           <svg
             className="h-full w-auto"
@@ -77,19 +78,19 @@ export function Header({ tabList }) {
           {tabList.map((tabObject, index) => {
             return (
               tabObject.isDisplayed && (
-                <TabButton
-                  key={"f-" + index}
-                  // onClick={() => openTab(index)}
-                  content={<Link to={tabObject.path}>{tabObject.tabName}</Link>}
-                  additionalStyles={"p-[var(--gap)]"}
-                />
+                <Link key={"f-" + index} to={tabObject.path}>
+                  <TabButton
+                    content={tabObject.tabName}
+                    additionalStyles={"p-[var(--gap)]"}
+                  />
+                </Link>
               )
             );
           })}
         </div>
         <button
           onClick={toggleSmallNav}
-          className="flex tablet:hidden justify-center items-center p-[var(--gap)] aspect-square h-full text-ta hover:bg-fint active:bg-fint transition"
+          className="flex tablet:hidden justify-center items-center p-[var(--gap)] aspect-square h-full text-ta cursor:hover:bg-fint active:bg-fint "
         >
           <svg
             className="h-[50%] w-auto"
@@ -122,14 +123,12 @@ export function Header({ tabList }) {
             {tabList.map((tabObject, index) => {
               return (
                 tabObject.isDisplayed && (
-                  <TabButton
-                    key={"s-" + index}
-                    // onClick={() => openTab(index)}
-                    content={
-                      <Link to={tabObject.path}>{tabObject.tabName}</Link>
-                    }
-                    additionalStyles={"p-[var(--gap)] rounded-[var(--gap)]"}
-                  />
+                  <Link key={"s-" + index} to={tabObject.path}>
+                    <TabButton
+                      content={tabObject.tabName}
+                      additionalStyles={"p-[var(--gap)] rounded-[var(--gap)]"}
+                    />
+                  </Link>
                 )
               );
             })}

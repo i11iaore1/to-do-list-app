@@ -8,7 +8,7 @@ function Button({ onClick, additionalStyles = "", content, tooltip, ref }) {
       title={tooltip}
       onClick={onClick}
       className={
-        "flex p-[var(--gap)] items-center justify-center border-solid border-first bg-st text-first text-[length:var(--normal-font-size)] border-[length:var(--border-width)] hover:text-ta active:text-ta transition " +
+        "flex p-[var(--gap)] items-center justify-center border-solid border-first bg-st text-first text-[length:var(--normal-font-size)] border-[length:var(--border-width)] cursor:hover:text-ta active:text-ta  " +
         additionalStyles
       }
     >
@@ -22,7 +22,7 @@ export function ButtonAdd({ additionalStyles = "", onClick, tooltip }) {
     <Button
       onClick={onClick}
       additionalStyles={
-        "h-[var(--diameter)] rounded-[var(--gap)] hover:bg-first active:bg-fint active:border-fint " +
+        "h-[var(--diameter)] rounded-[var(--gap)] cursor:hover:bg-first active:bg-fint active:border-fint " +
         additionalStyles
       }
       content={
@@ -48,7 +48,7 @@ export function ButtonClose({ additionalStyles = "", onClick, tooltip }) {
     <Button
       onClick={onClick}
       additionalStyles={
-        "flex-grow-0 aspect-square rounded-tr-[var(--gap)] rounded-bl-[var(--gap)] hover:bg-first active:border-fint active:bg-fint " +
+        "flex-grow-0 aspect-square rounded-tr-[var(--gap)] rounded-bl-[var(--gap)] cursor:hover:bg-first active:border-fint active:bg-fint " +
         additionalStyles
       }
       content={<CrossSVG additionalStyles="h-full w-auto" />}
@@ -62,7 +62,7 @@ export function ButtonComplete({ additionalStyles = "", onClick, tooltip }) {
     <Button
       onClick={onClick}
       additionalStyles={
-        "rounded-[var(--gap)] hover:bg-first active:bg-fint active:border-fint " +
+        "rounded-[var(--gap)] cursor:hover:bg-first active:bg-fint active:border-fint " +
         additionalStyles
       }
       content={
@@ -111,7 +111,7 @@ export function ButtonShowOptions({ options }) {
         ref={buttonRef}
         onClick={() => setIsShown(!isShown)}
         additionalStyles={
-          "aspect-square h-full rounded-[var(--gap)] hover:bg-first active:bg-fint active:border-fint"
+          "aspect-square h-full rounded-[var(--gap)] cursor:hover:bg-first active:bg-fint active:border-fint"
         }
         content={
           <svg
@@ -132,12 +132,12 @@ export function ButtonShowOptions({ options }) {
       {isShown && (
         <div
           ref={dropDownRef}
-          className="absolute right-full top-0 bg-ts rounded-[var(--gap)] overflow-hidden"
+          className="absolute right-full top-0 bg-[rgba(var(--overlay),0.8)] rounded-[var(--gap)] overflow-hidden"
         >
           {options.map((option, id) => (
             <button
               key={id}
-              className="block w-full px-[var(--gap)] py-[var(--half-gap)] text-center text-[length:var(--normal-font-size)] text-accent hover:bg-first hover:text-ta active:bg-fint active:text-ta transition"
+              className="block w-full px-[var(--gap)] py-[var(--half-gap)] text-center text-nowrap text-[length:var(--normal-font-size)] text-ta cursor:hover:bg-overlayfcs active:bg-overlayfcs"
               onClick={option.optionFunction}
             >
               {option.optionName}
@@ -156,7 +156,7 @@ export function ButtonDropDown({ onClick, isDropped }) {
       className="group flex items-center justify-center cursor-pointer"
       onClick={onClick}
     >
-      <div className="flex p-[var(--gap)] items-center justify-center border-solid border-first bg-st text-first group-hover:bg-first group-hover:text-ta group-active:bg-fint group-active:border-fint group-active:text-ta text-[length:var(--normal-font-size)] aspect-[3/1] h-[var(--radius)] pt-[var(--half-gap)] rounded-br-[33%_100%] rounded-bl-[33%_100%] border-[length:var(--border-width)] border-t-0 transition">
+      <div className="flex p-[var(--gap)] items-center justify-center border-solid border-first bg-st text-first cursor:group-hover:bg-first cursor:group-hover:text-ta group-active:bg-fint group-active:border-fint group-active:text-ta text-[length:var(--normal-font-size)] aspect-[3/1] h-[var(--radius)] pt-[var(--half-gap)] rounded-br-[33%_100%] rounded-bl-[33%_100%] border-[length:var(--border-width)] border-t-0 ">
         <svg
           className={isDropped ? "h-full w-auto" : "h-full w-auto rotate-180"}
           version="1.1"

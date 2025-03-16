@@ -1,23 +1,22 @@
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CrossSVG, GroupSVG, SearchSVG } from "../blocks/SVGs";
 import defaultGroupImage from "../images/default-group-image.png";
 import { ButtonAdd, ButtonClose } from "../blocks/buttons";
 import { Overlay } from "../blocks/base";
 import { useFetch } from "../hooks";
+import { UserContext } from "../App";
 
 function GroupCard({ groupCardObject }) {
   return (
-    <div className="grid grid-rows-[var(--bigger-radius)_1fr] aspect-square">
+    <div className="grid grid-rows-[var(--bigger-radius)_1fr] aspect-square select-none">
       <div className="grid grid-cols-[1fr_var(--bigger-radius)] rounded-t-[50%] bg-second">
-        <div className="rounded-tl-[var(--gap)] px-[var(--gap)] bg-second border-t-[length:var(--border-width)] border-l-[length:var(--border-width)] border-solid border-first text-first hover:text-fint active:text-fint cursor-pointer text-center text-[length:var(--normal-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-          <Link
-            to={`/groups/${groupCardObject.id}`}
-            className="leading-[var(--bigger-radius)]"
-          >
-            {groupCardObject.name}
-          </Link>
-        </div>
+        <Link
+          to={`/groups/${groupCardObject.id}`}
+          className="rounded-tl-[var(--gap)] px-[var(--gap)] bg-second border-t-[length:var(--border-width)] border-l-[length:var(--border-width)] border-solid border-first text-fa cursor-pointer text-center text-[length:var(--normal-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis leading-[var(--bigger-radius)]"
+        >
+          {groupCardObject.name}
+        </Link>
 
         <ButtonClose
           onClick={() => {
@@ -25,13 +24,14 @@ function GroupCard({ groupCardObject }) {
           }}
         />
       </div>
-      <div className="flex-1 flex w-full  flex-col p-[var(--gap)] bg-second border-solid rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-first">
+      <Link
+        to={`/groups/${groupCardObject.id}`}
+        className="flex-1 flex w-full  flex-col p-[var(--gap)] bg-second border-solid rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-first"
+      >
         <div className="flex flex-1 overflow-hidden justify-center items-center bg-third rounded-[var(--gap)] border-[length:var(--border-width)] border-first">
-          <Link to={`/groups/${groupCardObject.id}`} className="w-full h-full">
-            <img src={defaultGroupImage} className="h-full object-cover " />
-          </Link>
+          <img src={defaultGroupImage} className="h-full object-cover " />
         </div>
-      </div>
+      </Link>
     </div>
   );
 }
@@ -47,7 +47,7 @@ function DialogueWindow({ isShown, hideOverlay }) {
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
           <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-second">
-            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-first text-[length:var(--bigger-font-size)] font-bold">
+            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               GROUP CREATION
             </p>
             <ButtonClose onClick={hideOverlay} />
@@ -68,6 +68,8 @@ export function Panel({
   buttonAddFunction,
   buttonAddToolTip,
 }) {
+  const inputRef = useRef(null);
+
   return (
     <div className="sticky top-[var(--diameter)] inset-x-0 z-40 flex flex-row gap-x-[var(--gap)] p-[var(--gap)] mb-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-first bg-second">
       <div className="flex flex-row flex-1">
@@ -80,6 +82,7 @@ export function Panel({
           <SearchSVG additionalStyles="h-[var(--radius)]" />
         </div>
         <input
+          ref={inputRef}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
@@ -91,7 +94,7 @@ export function Panel({
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-first border-[length:var(--border-width)] border-l-0 hover:text-fint transition rounded-r-[var(--gap)] active:text-fint cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -102,13 +105,24 @@ export function Panel({
 }
 
 function MyGroupsTabContent() {
-  const {
-    data: groupList,
-    isPending,
-    error,
-  } = useFetch("http://localhost:8000/groups");
+  // const {
+  //   data: groupList,
+  //   isPending,
+  //   error,
+  // } = useFetch("http://localhost:8000/groups");
+
+  const { userGroups } = useContext(UserContext);
+  const [groupList, setGroupList] = useState([]);
+
+  useEffect(() => {
+    if (userGroups) {
+      setGroupList(userGroups);
+    }
+  }, [userGroups]);
 
   const [overlayState, setOverlayState] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   function showOverlay() {
     setOverlayState(true);
@@ -122,22 +136,12 @@ function MyGroupsTabContent() {
     <>
       <DialogueWindow isShown={overlayState} hideOverlay={hideOverlay} />
       <Panel
-        // buttonSearchFunction={() => console.log("Search pressed")}
-        // buttonSearchToolTip={"Find group by id"}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
         buttonAddFunction={showOverlay}
         buttonAddToolTip={"Create group"}
       />
-      {error && (
-        <div className="p-[var(--gap)] text-[length:var(--bigger-font-size)] text-accent font-bold">
-          {error}
-        </div>
-      )}
-      {isPending && (
-        <div className="p-[var(--gap)] text-[length:var(--bigger-font-size)] text-accent font-bold">
-          Loading groups...
-        </div>
-      )}
-      {groupList && (
+      {groupList.length > 0 ? (
         <div className="grid grid-cols-1 mobile:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] tablet:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] laptop:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[var(--gap)] gap-y-[var(--gap)] p-[var(--gap)] pt-0">
           {groupList.map((groupCardObject) => (
             <GroupCard
@@ -145,6 +149,10 @@ function MyGroupsTabContent() {
               groupCardObject={groupCardObject}
             />
           ))}
+        </div>
+      ) : (
+        <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] font-bold text-center">
+          It seems you are not a member of any groups.
         </div>
       )}
     </>

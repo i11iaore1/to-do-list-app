@@ -12,7 +12,10 @@ export default {
         tint: "rgba(var(--third-interactive))",
         accent: "rgba(var(--accent))",
         placeholder: "rgba(var(--placeholder))",
-        overlay: "#00000080",
+        error: "rgba(var(--error))",
+
+        overlay: "rgba(var(--overlay), 0.5)",
+        overlayfcs: "rgba(var(--overlay))",
 
         ta: "rgba(var(--third-accent))",
         tf: "rgba(var(--third-first))",
@@ -28,6 +31,7 @@ export default {
         mobile: "20em",
         tablet: "48em",
         laptop: "64em",
+        cursor: { raw: "(hover: hover) and (pointer: fine)" },
       },
     },
   },

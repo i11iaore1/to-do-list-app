@@ -26,9 +26,14 @@ const ScrollToTop = () => {
 };
 
 export const UserContext = createContext();
+export const ThemeContext = createContext();
 
 function App() {
-  const [currentUser, setCurrentUser] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userTasks, setUserTasks] = useState([]);
+  const [userGroups, setUserGroups] = useState([]);
+
+  const [theme, setTheme] = useState(true);
 
   const tabList = [
     {
@@ -41,74 +46,130 @@ function App() {
       tabName: "My tasks",
       path: "/mytasks",
       tabContent: <MyTasksTabContent />,
-      // isDisplayed: currentUser,
-      isDisplayed: true,
+      isDisplayed: currentUser,
     },
     {
       tabName: "My profile",
       path: "/myprofile",
       tabContent: <MyProfileTabContent />,
-      // isDisplayed: currentUser,
-      isDisplayed: true,
+      isDisplayed: currentUser,
     },
     {
       tabName: "My groups",
       path: "/mygroups",
       tabContent: <MyGroupsTabContent />,
-      // isDisplayed: currentUser,
-      isDisplayed: true,
+      isDisplayed: currentUser,
     },
     {
       tabName: "Group tasks",
       path: "/group/:id",
       tabContent: <GroupTasksTabContent />,
-      // isDisplayed: false,
-      isDisplayed: true,
+      isDisplayed: false,
     },
     {
       tabName: "Sign in",
       path: "/signin",
       tabContent: <SignInTabContent />,
-      // isDisplayed: !currentUser,
-      isDisplayed: true,
+      isDisplayed: !currentUser,
     },
     {
       tabName: "Register",
       path: "/register",
       tabContent: <RegisterTabContent />,
-      // isDisplayed: !currentUser,
-      isDisplayed: true,
+      isDisplayed: !currentUser,
     },
   ];
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      const parsedUser = JSON.parse(user);
+
+      const fetchUserInfo = async () => {
+        try {
+          const tasksPromises = parsedUser.tasks.map((taskId) =>
+            fetch(`http://localhost:8000/tasks/${taskId}`).then((res) =>
+              res.json()
+            )
+          );
+          const tasksData = await Promise.all(tasksPromises);
+          // console.log("TASKS DATA LOADED:/n" + tasksData);
+          setUserTasks(tasksData);
+
+          const response = await fetch(`http://localhost:8000/groups`);
+          const groups = await response.json();
+          const userGroups = groups.filter((group) =>
+            group.members.includes(parsedUser.id)
+          );
+
+          setUserGroups(userGroups);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
+      setCurrentUser(parsedUser);
+      fetchUserInfo();
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme !== null) {
+      const isDarkTheme = JSON.parse(savedTheme);
+      setTheme(isDarkTheme);
+      document.body.className = isDarkTheme ? "dark" : "light";
+    }
+  }, []);
 
   return (
     <Router>
       <ScrollToTop />
-      <Wrapper
-        content={
-          <UserContext.Provider value={{ currentUser, setCurrentUser }}>
-            <Header tabList={tabList} />
-            <Routes>
-              <Route exact path="/" element={<HomeTabContent />} />
-              <Route exact path="/mytasks" element={<MyTasksTabContent />} />
-              <Route
-                exact
-                path="/myprofile"
-                element={<MyProfileTabContent />}
-              />
-              <Route exact path="/mygroups" element={<MyGroupsTabContent />} />
-              <Route
-                exact
-                path="/groups/:id"
-                element={<GroupTasksTabContent />}
-              />
-              <Route exact path="/signin" element={<SignInTabContent />} />
-              <Route exact path="/register" element={<RegisterTabContent />} />
-            </Routes>
-          </UserContext.Provider>
-        }
-      />
-      <Footer />
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        <Wrapper
+          content={
+            <UserContext.Provider
+              value={{
+                currentUser,
+                setCurrentUser,
+                userTasks,
+                setUserTasks,
+                userGroups,
+                setUserGroups,
+              }}
+            >
+              <Header tabList={tabList} />
+              <Routes>
+                <Route exact path="/" element={<HomeTabContent />} />
+                <Route exact path="/mytasks" element={<MyTasksTabContent />} />
+                <Route
+                  exact
+                  path="/myprofile"
+                  element={<MyProfileTabContent />}
+                />
+                <Route
+                  exact
+                  path="/mygroups"
+                  element={<MyGroupsTabContent />}
+                />
+                <Route
+                  exact
+                  path="/groups/:id"
+                  element={<GroupTasksTabContent />}
+                />
+                <Route exact path="/signin" element={<SignInTabContent />} />
+                <Route
+                  exact
+                  path="/register"
+                  element={<RegisterTabContent />}
+                />
+              </Routes>
+            </UserContext.Provider>
+          }
+        />
+        <Footer />
+      </ThemeContext.Provider>
     </Router>
   );
 }

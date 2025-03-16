@@ -58,6 +58,8 @@ svg {
   --third-interactive: 224, 224, 224;
   --accent: 12, 12, 12;
   --placeholder: 170, 170, 170;
+  --overlay: 0, 0, 0;
+  --error: 219, 40, 27;
 
   --third-accent: var(--third);
   --third-first: var(--third);
@@ -79,6 +81,8 @@ svg {
   --accent: 240, 240, 240;
   --accent-interactive: 224, 224, 224;
   --placeholder: 170, 170, 170;
+  --overlay: 0, 0, 0;
+  --error: 233, 100, 91;
 
   --date: 173, 216, 230;
 

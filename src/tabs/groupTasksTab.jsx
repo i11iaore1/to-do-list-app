@@ -14,7 +14,7 @@ function UserPreviewCard({ userInfoObject }) {
           <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
         )}
       </div>
-      <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-accent text-[length:var(--smaller-font-size)]">
+      <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-accent text-center text-[length:var(--smaller-font-size)]">
         {userInfoObject.name}
       </div>
     </div>
@@ -27,14 +27,14 @@ function GroupDescription({
   userObjectList,
   showAllMembersButtonFunction,
 }) {
-  const memberList = useRef(null);
+  const memberListRef = useRef(null);
   const [allMembersButtonState, setallMembersButtonState] = useState(false);
 
   useEffect(() => {
     const checkOverflow = () => {
-      if (memberList.current) {
+      if (memberListRef.current) {
         setallMembersButtonState(
-          memberList.current.scrollWidth > memberList.current.clientWidth
+          memberListRef.current.scrollWidth > memberListRef.current.clientWidth
         );
       }
     };
@@ -46,15 +46,15 @@ function GroupDescription({
 
   return (
     <>
-      <div className="flex flex-row items-center justify-between gap-x-[var(--gap)] p-[var(--gap)] bg-first ">
-        <div className="flex-1 text-third text-[length:var(--bigger-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+      <div className="flex flex-row items-center justify-between gap-x-[var(--gap)] p-[var(--gap)] bg-[linear-gradient(0deg,rgba(var(--first)),rgba(var(--second)))] ">
+        <div className="flex-1 text-ta text-[length:var(--bigger-font-size)] font-bold whitespace-nowrap overflow-hidden text-ellipsis">
           {name}
         </div>
         <div
           onClick={() => {
             navigator.clipboard.writeText(id);
           }}
-          className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-accent bg-third rounded-[var(--gap)] leading-none cursor-pointer active:bg-tint transition"
+          className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-accent bg-third rounded-[var(--gap)] leading-none cursor-pointer active:bg-tint "
         >
           <div className="flex-row flex-1 gap-x-[var(--gap)] hidden mobile:flex text-center text-[length:var(--normal-font-size)] select-none">
             ID:
@@ -80,7 +80,7 @@ function GroupDescription({
       </div>
       <div className="flex flex-row gap-x-[var(--gap)] p-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-first">
         <div
-          ref={memberList}
+          ref={memberListRef}
           className={"flex flex-row gap-x-[var(--gap)] overflow-x-hidden"}
         >
           {userObjectList.map((userInfoObject, index) => (
@@ -89,11 +89,11 @@ function GroupDescription({
         </div>
         {allMembersButtonState && (
           <div className="relative py-[var(--gap)] pl-[var(--gap)] flex items-center justify-center">
-            <div className="absolute right-[calc(100%+var(--gap))] inset-y-0 bg-[linear-gradient(90deg,#f0f0f000,#f0f0f0ff)] w-[var(--diameter)]"></div>
+            <div className="absolute right-[calc(100%+var(--gap))] inset-y-0 bg-[linear-gradient(90deg,#00000000,rgba(var(--third-second)))] w-[var(--diameter)]"></div>
             <div
               title="Show all members"
               onClick={showAllMembersButtonFunction}
-              className="flex h-[var(--diameter)] aspect-square p-[var(--gap)] rounded-[var(--gap)] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent cursor-pointer hover:bg-first hover:text-third hover:border-first active:bg-fint active:text-third active:border-fint transition"
+              className="flex h-[var(--diameter)] aspect-square p-[var(--gap)] rounded-[var(--gap)] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent cursor-pointer cursor:hover:bg-first cursor:hover:text-ta cursor:hover:border-first active:bg-fint active:text-ta active:border-fint "
             >
               <GroupSVG additionalStyles={"w-full h-auto"} />
             </div>
@@ -112,7 +112,7 @@ function UserPreviewHorizontal({ userInfoObject }) {
           <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
         )}
       </div>
-      <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-first text-[length:var(--normal-font-size)] font-bold">
+      <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-fa text-[length:var(--normal-font-size)] font-bold">
         {userInfoObject.name}
       </div>
     </div>
@@ -122,7 +122,7 @@ function UserPreviewHorizontal({ userInfoObject }) {
 function MembersDialogueWindow({ isShown, hide, userObjectList }) {
   return (
     <Overlay
-      isShown={isShown == 1}
+      isShown={isShown}
       hideOverlay={hide}
       content={
         <div
@@ -130,7 +130,7 @@ function MembersDialogueWindow({ isShown, hide, userObjectList }) {
           className="flex flex-col max-h-full w-full max-w-[40em] flex-shrink"
         >
           <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-second">
-            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-first text-[length:var(--bigger-font-size)] font-bold">
+            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               GROUP MEMBERS
             </p>
             <ButtonClose onClick={hide} />
@@ -151,8 +151,8 @@ function MembersDialogueWindow({ isShown, hide, userObjectList }) {
 
 function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   const [formData, setFormData] = useState({
-    taskName: "",
-    taskDescription: "",
+    name: "",
+    description: "",
     date: "",
     time: "",
   });
@@ -160,8 +160,8 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   useEffect(() => {
     if (isShown) {
       setFormData({
-        taskName: "",
-        taskDescription: "",
+        name: "",
+        description: "",
         date: "",
         time: "",
       });
@@ -169,10 +169,8 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   }, [isShown]);
 
   function buttonCreateFunction() {
-    const taskName = document
-      .getElementById("taskNameInputCreate")
-      .value.trim();
-    const taskDescription = document.getElementById(
+    const name = document.getElementById("taskNameInputCreate").value.trim();
+    const description = document.getElementById(
       "taskDescriptionInputCreate"
     ).value;
 
@@ -182,10 +180,10 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
     const date = `${day}.${month}.${year}`;
     const time = document.getElementById("timeInputCreate").value;
 
-    if (taskName && date && time) {
+    if (name && date && time) {
       createTask({
-        taskName: taskName,
-        taskDescription: taskDescription,
+        name: name,
+        description: description,
         date: date,
         time: time,
       });
@@ -215,9 +213,9 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
               type="text"
               placeholder="Name"
               className="input w-full"
-              value={formData.taskName}
+              value={formData.name}
               onChange={(e) =>
-                setFormData({ ...formData, taskName: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
               }
             />
             <textarea
@@ -225,9 +223,9 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
               rows="3"
               placeholder="Description"
               className="input w-full resize-none flex-shrink-0"
-              value={formData.taskDescription}
+              value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, taskDescription: e.target.value })
+                setFormData({ ...formData, description: e.target.value })
               }
             />
             <div className="flex flex-row gap-x-[var(--gap)]">
@@ -269,8 +267,8 @@ function TaskEditionDialogueWindow({
   applyChanges,
 }) {
   const [formData, setFormData] = useState({
-    taskName: "",
-    taskDescription: "",
+    name: "",
+    description: "",
     date: "",
     time: "",
   });
@@ -285,8 +283,8 @@ function TaskEditionDialogueWindow({
   }, [isShown]);
 
   function buttonApplyFunction() {
-    const taskName = document.getElementById("taskNameInputEdit").value.trim();
-    const taskDescription = document.getElementById(
+    const name = document.getElementById("taskNameInputEdit").value.trim();
+    const description = document.getElementById(
       "taskDescriptionInputEdit"
     ).value;
 
@@ -296,11 +294,11 @@ function TaskEditionDialogueWindow({
     const date = `${day}.${month}.${year}`;
     const time = document.getElementById("timeInputEdit").value;
 
-    if (taskName && date && time) {
+    if (name && date && time) {
       applyChanges({
         id: cardObject.id,
-        taskName: taskName,
-        taskDescription: taskDescription,
+        name: name,
+        description: description,
         date: date,
         time: time,
       });
@@ -319,7 +317,7 @@ function TaskEditionDialogueWindow({
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
           <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-second">
-            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
+            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               TASK EDITION
             </p>
             <ButtonClose onClick={hide} />
@@ -330,9 +328,9 @@ function TaskEditionDialogueWindow({
               type="text"
               placeholder="Name"
               className="input w-full"
-              value={formData.taskName}
+              value={formData.name}
               onChange={(e) =>
-                setFormData({ ...formData, taskName: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
               }
             />
             <textarea
@@ -340,9 +338,9 @@ function TaskEditionDialogueWindow({
               rows="3"
               placeholder="Description"
               className="input w-full resize-none flex-shrink-0"
-              value={formData.taskDescription}
+              value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, taskDescription: e.target.value })
+                setFormData({ ...formData, description: e.target.value })
               }
             />
             <div className="flex flex-row gap-x-[var(--gap)]">
@@ -409,7 +407,7 @@ export function Panel({
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 hover:text-first transition rounded-r-[var(--gap)] active:text-fint cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -422,46 +420,46 @@ export function Panel({
 function GroupTasksTabContent() {
   const { id } = useParams();
 
-  const {
-    data: users,
-    isPending: usersPending,
-    error: usersError,
-  } = useFetch("http://localhost:8000/users");
-
-  const {
-    data: tasks,
-    isPending: tasksPending,
-    error: tasksError,
-  } = useFetch("http://localhost:8000/tasks");
-
-  const {
-    data: groupInfo,
-    isPending: groupPending,
-    error: groupError,
-  } = useFetch(`http://localhost:8000/groups/${id}`);
-
-  const [cardObjectList, setCardObjectList] = useState(null);
-  const [memberList, setMemberList] = useState(null);
+  const [groupInfo, setGroupInfo] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (
-      !tasks ||
-      !groupInfo ||
-      !users ||
-      !groupInfo.tasks ||
-      !groupInfo.members
-    )
-      return;
+    const fetchGroupData = async () => {
+      try {
+        const groupResponse = await fetch(`http://localhost:8000/groups/${id}`);
+        const groupData = await groupResponse.json();
+        setGroupInfo(groupData);
 
-    const allTasks = tasks.filter((task) => groupInfo.tasks.includes(task.id));
-    const members = users.filter((user) => groupInfo.members.includes(user.id));
+        const memberPromises = groupData.members.map((memberId) =>
+          fetch(`http://localhost:8000/users/${memberId}`).then((response) =>
+            response.json()
+          )
+        );
+        const membersData = await Promise.all(memberPromises);
+        setUsers(membersData);
 
-    setCardObjectList(allTasks);
-    setMemberList(members);
-  }, [tasks, groupInfo, users]);
+        const taskPromises = groupData.tasks.map((taskId) =>
+          fetch(`http://localhost:8000/tasks/${taskId}`).then((response) =>
+            response.json()
+          )
+        );
+        const tasksData = await Promise.all(taskPromises);
+        setTasks(tasksData);
+
+        setIsLoading(false);
+      } catch (error) {
+        setError("Failed fetching group info");
+      }
+    };
+
+    fetchGroupData();
+  }, [id]);
 
   useEffect(() => {
-    setCardObjectList((prevList) => {
+    setTasks((prevList) => {
       const sortedList = [...prevList].sort((a, b) => {
         const dateA = new Date(
           a.date.split(".").reverse().join("-") + "T" + a.time
@@ -477,7 +475,7 @@ function GroupTasksTabContent() {
         : false;
       return isSorted ? prevList : sortedList;
     });
-  }, [cardObjectList]);
+  }, [tasks]);
 
   const [isMembersDialogueWindowShown, setIsMembersDialogueWindowShown] =
     useState(false);
@@ -490,21 +488,17 @@ function GroupTasksTabContent() {
   const [searchQuery, setSearchQuery] = useState("");
 
   function handleDelete(id) {
-    setCardObjectList(
-      cardObjectList.filter((cardObject) => cardObject.id !== id)
-    );
+    setTasks(tasks.filter((cardObject) => cardObject.id !== id));
   }
 
   function handleEdit(id) {
-    setEditedCardObject(
-      cardObjectList.find((cardObject) => cardObject.id === id)
-    );
+    setEditedCardObject(tasks.find((cardObject) => cardObject.id === id));
     setIsEditionWindowShown(true);
   }
 
   function applyChanges(newCardObject) {
     const id = newCardObject.id;
-    setCardObjectList((prevCardObjectList) =>
+    setTasks((prevCardObjectList) =>
       prevCardObjectList.map((cardObject) =>
         cardObject.id === id ? newCardObject : cardObject
       )
@@ -513,34 +507,39 @@ function GroupTasksTabContent() {
   }
 
   function createTask(newCardObject) {
-    let maxId = cardObjectList.length
-      ? Math.max(...cardObjectList.map((item) => Number(item.id)))
-      : 0;
-    setCardObjectList([
-      ...cardObjectList,
-      { ...newCardObject, id: (maxId + 1).toString() },
-    ]);
+    let maxId = tasks.length ? Math.max(...tasks.map((item) => item.id)) : 0;
+    setTasks([...tasks, { ...newCardObject, id: (maxId + 1).toString() }]);
     setIsCreationWindowShown(false);
   }
 
   const [filteredCards, setFilteredCards] = useState([]);
 
   useEffect(() => {
-    cardObjectList &&
+    tasks &&
       setFilteredCards(
-        cardObjectList.filter((card) =>
-          card.taskName.toLowerCase().includes(searchQuery.toLowerCase())
+        tasks.filter((card) =>
+          card.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
       );
-  }, [cardObjectList, searchQuery]);
+  }, [tasks, searchQuery]);
 
   return (
     <>
-      {memberList && (
+      {isLoading && (
+        <div className="p-[var(--gap)] text-fa text-[length:var(--normal-font-size)] font-bold">
+          Loading...
+        </div>
+      )}
+      {error && (
+        <div className="p-[var(--gap)] text-error text-[length:var(--normal-font-size)] font-bold">
+          {error}
+        </div>
+      )}
+      {users && (
         <MembersDialogueWindow
           isShown={isMembersDialogueWindowShown}
           hide={() => setIsMembersDialogueWindowShown(false)}
-          userObjectList={memberList}
+          userObjectList={users}
         />
       )}
       <TaskEditionDialogueWindow
@@ -554,12 +553,14 @@ function GroupTasksTabContent() {
         hide={() => setIsCreationWindowShown(false)}
         createTask={createTask}
       />
-      {memberList && (
+      {users && groupInfo && (
         <GroupDescription
           name={groupInfo.name}
           id={id}
-          userObjectList={memberList}
-          showAllMembersButton={() => setIsMembersDialogueWindowShown(true)}
+          userObjectList={users}
+          showAllMembersButtonFunction={() =>
+            setIsMembersDialogueWindowShown(true)
+          }
         />
       )}
       <Panel
@@ -568,15 +569,15 @@ function GroupTasksTabContent() {
         buttonAddFunction={() => setIsCreationWindowShown(true)}
         buttonAddToolTip={"Create task"}
       />
-      {cardObjectList ? (
+      {tasks ? (
         <CardList
           cardObjectList={filteredCards}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />
       ) : (
-        !groupPending &&
-        !groupError && (
+        !isLoading &&
+        !error && (
           <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] text-center">
             It seems this group is out of tasks.
           </div>

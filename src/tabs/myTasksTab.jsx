@@ -7,8 +7,8 @@ import { UserContext } from "../App";
 
 function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   const [formData, setFormData] = useState({
-    taskName: "",
-    taskDescription: "",
+    name: "",
+    description: "",
     date: "",
     time: "",
   });
@@ -16,8 +16,8 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   useEffect(() => {
     if (isShown) {
       setFormData({
-        taskName: "",
-        taskDescription: "",
+        name: "",
+        description: "",
         date: "",
         time: "",
       });
@@ -25,28 +25,16 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
   }, [isShown]);
 
   function buttonCreateFunction() {
-    const taskName = document
-      .getElementById("taskNameInputCreate")
-      .value.trim();
-    const taskDescription = document.getElementById(
-      "taskDescriptionInputCreate"
-    ).value;
+    const { name, description, date, time } = formData;
 
-    const [year, month, day] = document
-      .getElementById("dateInputCreate")
-      .value.split("-");
-    const date = `${day}.${month}.${year}`;
-    const time = document.getElementById("timeInputCreate").value;
-
-    if (taskName && date && time) {
+    if (name && date && time) {
+      const formattedDate = date.split("-").reverse().join(".");
       createTask({
-        taskName: taskName,
-        taskDescription: taskDescription,
-        date: date,
+        name: name,
+        description: description,
+        date: formattedDate,
         time: time,
       });
-    } else {
-      alert("Please fill in all required fields: Name, Date, and Time.");
     }
   }
 
@@ -67,28 +55,25 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
             <input
-              id="taskNameInputCreate"
               type="text"
               placeholder="Name"
               className="input w-full"
-              value={formData.taskName}
+              value={formData.name}
               onChange={(e) =>
-                setFormData({ ...formData, taskName: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
               }
             />
             <textarea
-              id="taskDescriptionInputCreate"
               rows="3"
               placeholder="Description"
               className="input w-full resize-none flex-shrink-0"
-              value={formData.taskDescription}
+              value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, taskDescription: e.target.value })
+                setFormData({ ...formData, description: e.target.value })
               }
             />
             <div className="flex flex-row gap-x-[var(--gap)]">
               <input
-                id="timeInputCreate"
                 type="time"
                 className="input flex-1"
                 value={formData.time}
@@ -97,7 +82,6 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
                 }
               />
               <input
-                id="dateInputCreate"
                 type="date"
                 className="input flex-1"
                 value={formData.date}
@@ -125,8 +109,8 @@ function TaskEditionDialogueWindow({
   applyChanges,
 }) {
   const [formData, setFormData] = useState({
-    taskName: "",
-    taskDescription: "",
+    name: "",
+    description: "",
     date: "",
     time: "",
   });
@@ -141,8 +125,8 @@ function TaskEditionDialogueWindow({
   }, [isShown]);
 
   function buttonApplyFunction() {
-    const taskName = document.getElementById("taskNameInputEdit").value.trim();
-    const taskDescription = document.getElementById(
+    const name = document.getElementById("taskNameInputEdit").value.trim();
+    const description = document.getElementById(
       "taskDescriptionInputEdit"
     ).value;
 
@@ -152,11 +136,11 @@ function TaskEditionDialogueWindow({
     const date = `${day}.${month}.${year}`;
     const time = document.getElementById("timeInputEdit").value;
 
-    if (taskName && date && time) {
+    if (name && date && time) {
       applyChanges({
         id: cardObject.id,
-        taskName: taskName,
-        taskDescription: taskDescription,
+        name: name,
+        description: description,
         date: date,
         time: time,
       });
@@ -186,9 +170,9 @@ function TaskEditionDialogueWindow({
               type="text"
               placeholder="Name"
               className="input w-full"
-              value={formData.taskName}
+              value={formData.name}
               onChange={(e) =>
-                setFormData({ ...formData, taskName: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
               }
             />
             <textarea
@@ -196,9 +180,9 @@ function TaskEditionDialogueWindow({
               rows="3"
               placeholder="Description"
               className="input w-full resize-none flex-shrink-0"
-              value={formData.taskDescription}
+              value={formData.description}
               onChange={(e) =>
-                setFormData({ ...formData, taskDescription: e.target.value })
+                setFormData({ ...formData, description: e.target.value })
               }
             />
             <div className="flex flex-row gap-x-[var(--gap)]">
@@ -265,7 +249,7 @@ export function Panel({
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 hover:text-fa transition rounded-r-[var(--gap)] active:text-fa cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -277,49 +261,36 @@ export function Panel({
 
 function MyTasksTabContent() {
   const [cardObjectList, setCardObjectList] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const { user, setuser } = useContext(UserContext);
-  // console.log(user);
-
-  let allTasks = [
-    {
-      id: "1",
-      taskName: "TASK_NAME1",
-      taskDescription:
-        "TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1 TASK_DESCRIPTION1",
-      date: "02.12.2024",
-      time: "11:30",
-    },
-    {
-      id: "2",
-      taskName: "TASK_NAME1",
-      taskDescription: "",
-      date: "02.12.2024",
-      time: "11:30",
-    },
-    {
-      id: "3",
-      taskName: "TASK_NAME2",
-      taskDescription: "TASK_DESCRIPTION2",
-      date: "02.12.2024",
-      time: "11:31",
-    },
-    {
-      id: "4",
-      taskName: "TASK_NAME3",
-      taskDescription: "TASK_DESCRIPTION3",
-      date: "03.12.2024",
-      time: "11:31",
-    },
-  ];
+  const { currentUser, setCurrentUser, userTasks, setUserTasks } =
+    useContext(UserContext);
 
   useEffect(() => {
-    setCardObjectList(allTasks);
-  }, []);
+    if (userTasks) {
+      const now = new Date();
+      const currentTasks = userTasks.filter((taskObject) => {
+        if (taskObject.state) {
+          return false;
+        } else {
+          const taskDateTime = new Date(
+            taskObject.date.split(".").reverse().join("-") +
+              "T" +
+              taskObject.time
+          );
+          return taskDateTime > now;
+        }
+      });
+
+      setCardObjectList(currentTasks);
+    }
+  }, [userTasks]);
 
   useEffect(() => {
     setCardObjectList((prevList) => {
       const sortedList = [...prevList].sort((a, b) => {
+        // console.log("a: ", a, "b: ", b);
         const dateA = new Date(
           a.date.split(".").reverse().join("-") + "T" + a.time
         );
@@ -336,17 +307,66 @@ function MyTasksTabContent() {
     });
   }, [cardObjectList]);
 
+  useEffect(() => {
+    if (cardObjectList) {
+      const filtered = cardObjectList.filter((card) =>
+        card.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredCards(filtered);
+    }
+  }, [cardObjectList, searchQuery]);
+
   const [isCreationWindowShown, setIsCreationWindowShown] = useState(false);
 
   const [isEditionWindowShown, setIsEditionWindowShown] = useState(false);
   const [editedCardObject, setEditedCardObject] = useState(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  async function handleComplete(id) {
+    const updateResponse = await fetch(`http://localhost:8000/tasks/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ state: 1 }),
+    });
 
-  function handleDelete(id) {
-    setCardObjectList(
-      cardObjectList.filter((cardObject) => cardObject.id !== id)
+    const updatedTasks = userTasks.map((taskObject) =>
+      taskObject.id === id ? { ...taskObject, state: 1 } : taskObject
     );
+
+    setUserTasks(updatedTasks);
+  }
+
+  async function handleDelete(id) {
+    const deleteTaskResponse = await fetch(
+      `http://localhost:8000/tasks/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    const updatedTasks = userTasks.filter((cardObject) => cardObject.id !== id);
+    setUserTasks(updatedTasks);
+    const updatedTaskIndexes = updatedTasks.map((taskObject) => taskObject.id);
+
+    const updateResponse = await fetch(
+      `http://localhost:8000/users/${currentUser.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tasks: updatedTaskIndexes,
+        }),
+      }
+    );
+
+    const newUserInfo = { ...currentUser, tasks: updatedTaskIndexes };
+    setCurrentUser(newUserInfo);
+    localStorage.setItem("user", JSON.stringify(newUserInfo));
+
+    setIsCreationWindowShown(false);
   }
 
   function handleEdit(id) {
@@ -356,30 +376,59 @@ function MyTasksTabContent() {
     setIsEditionWindowShown(true);
   }
 
-  function applyChanges(newCardObject) {
+  async function applyChanges(newCardObject) {
     const id = newCardObject.id;
-    setCardObjectList((prevCardObjectList) =>
-      prevCardObjectList.map((cardObject) =>
-        cardObject.id === id ? newCardObject : cardObject
-      )
+
+    const updateResponse = await fetch(`http://localhost:8000/tasks/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newCardObject),
+    });
+
+    const updatedTasks = cardObjectList.map((cardObject) =>
+      cardObject.id === id ? newCardObject : cardObject
     );
+
+    setUserTasks(updatedTasks);
+
     setIsEditionWindowShown(false);
   }
 
-  function createTask(newCardObject) {
-    let maxId = cardObjectList.length
-      ? Math.max(...cardObjectList.map((item) => Number(item.id)))
-      : 0;
-    setCardObjectList([
-      ...cardObjectList,
-      { ...newCardObject, id: (maxId + 1).toString() },
-    ]);
+  async function createTask(newCardObject) {
+    const response = await fetch("http://localhost:8000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...newCardObject, state: 0 }),
+    });
+
+    const createdTask = await response.json();
+    const updatedTasks = [...userTasks, createdTask];
+    const updatedTaskIndexes = updatedTasks.map((taskObject) => taskObject.id);
+
+    const updateResponse = await fetch(
+      `http://localhost:8000/users/${currentUser.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tasks: updatedTaskIndexes,
+        }),
+      }
+    );
+
+    const newUserInfo = { ...currentUser, tasks: updatedTaskIndexes };
+    setCurrentUser(newUserInfo);
+    localStorage.setItem("user", JSON.stringify(newUserInfo));
+    setUserTasks(updatedTasks);
+
     setIsCreationWindowShown(false);
   }
-
-  const filteredCards = cardObjectList.filter((card) =>
-    card.taskName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <>
@@ -400,9 +449,10 @@ function MyTasksTabContent() {
         buttonAddFunction={() => setIsCreationWindowShown(true)}
         buttonAddToolTip={"Create task"}
       />
-      {cardObjectList ? (
+      {filteredCards.length > 0 ? (
         <CardList
           cardObjectList={filteredCards}
+          handleComplete={handleComplete}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />
