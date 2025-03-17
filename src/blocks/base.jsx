@@ -8,7 +8,7 @@ export function TabButton({ onClick, content, additionalStyles }) {
     <div
       onClick={onClick}
       className={
-        "flex justify-center items-center h-full text-ta  cursor:hover:bg-fint active:bg-fint  text-[length:var(--normal-font-size)] font-bold cursor-pointer select-none " +
+        "flex justify-center items-center h-full text-ta  cursor:hover:bg-fint active:!bg-fint  text-[length:var(--normal-font-size)] font-bold cursor-pointer select-none " +
         additionalStyles
       }
     >
@@ -51,7 +51,7 @@ export function Header({ tabList }) {
         <div
           title="Switch theme"
           onClick={switchTheme}
-          className="h-full aspect-square cursor:hover:bg-fint active:bg-fint text-ta p-[var(--gap)] cursor-pointer "
+          className="h-full aspect-square cursor:hover:bg-fint active:!bg-fint text-ta p-[var(--gap)] cursor-pointer "
         >
           <svg
             className="h-full w-auto"
@@ -90,7 +90,7 @@ export function Header({ tabList }) {
         </div>
         <button
           onClick={toggleSmallNav}
-          className="flex tablet:hidden justify-center items-center p-[var(--gap)] aspect-square h-full text-ta cursor:hover:bg-fint active:bg-fint "
+          className="flex tablet:hidden justify-center items-center p-[var(--gap)] aspect-square h-full text-ta cursor:hover:bg-fint active:!bg-fint "
         >
           <svg
             className="h-[50%] w-auto"

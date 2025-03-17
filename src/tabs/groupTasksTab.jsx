@@ -54,7 +54,7 @@ function GroupDescription({
           onClick={() => {
             navigator.clipboard.writeText(id);
           }}
-          className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-accent bg-third rounded-[var(--gap)] leading-none cursor-pointer active:bg-tint "
+          className="flex flex-row aspect-square mobile:aspect-auto items-center justify-center gap-x-[var(--gap)] p-[var(--gap)] text-accent bg-third rounded-[var(--gap)] leading-none cursor-pointer active:!bg-tint "
         >
           <div className="flex-row flex-1 gap-x-[var(--gap)] hidden mobile:flex text-center text-[length:var(--normal-font-size)] select-none">
             ID:
@@ -93,7 +93,7 @@ function GroupDescription({
             <div
               title="Show all members"
               onClick={showAllMembersButtonFunction}
-              className="flex h-[var(--diameter)] aspect-square p-[var(--gap)] rounded-[var(--gap)] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent cursor-pointer cursor:hover:bg-first cursor:hover:text-ta cursor:hover:border-first active:bg-fint active:text-ta active:border-fint "
+              className="flex h-[var(--diameter)] aspect-square p-[var(--gap)] rounded-[var(--gap)] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent cursor-pointer cursor:hover:bg-first cursor:hover:text-ta cursor:hover:border-first active:!bg-fint active:!text-ta active:!border-fint "
             >
               <GroupSVG additionalStyles={"w-full h-auto"} />
             </div>
@@ -400,14 +400,14 @@ export function Panel({
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
           placeholder="Search"
-          className="input border-x-0 rounded-[0] flex-1"
+          className="input border-x-0 px-0 rounded-[0] flex-1"
         />
         <div
           onClick={() => {
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:!text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -451,6 +451,7 @@ function GroupTasksTabContent() {
 
         setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         setError("Failed fetching group info");
       }
     };
@@ -578,8 +579,8 @@ function GroupTasksTabContent() {
       ) : (
         !isLoading &&
         !error && (
-          <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] text-center">
-            It seems this group is out of tasks.
+          <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] font-bold text-center">
+            No tasks found.
           </div>
         )
       )}

@@ -87,14 +87,14 @@ export function Panel({
           onChange={(e) => setSearchQuery(e.target.value)}
           type="text"
           placeholder="Search"
-          className="input border-x-0 rounded-[0] flex-1"
+          className="input border-x-0 px-0 rounded-[0] flex-1"
         />
         <div
           onClick={() => {
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:!text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -105,12 +105,6 @@ export function Panel({
 }
 
 function MyGroupsTabContent() {
-  // const {
-  //   data: groupList,
-  //   isPending,
-  //   error,
-  // } = useFetch("http://localhost:8000/groups");
-
   const { userGroups } = useContext(UserContext);
   const [groupList, setGroupList] = useState([]);
 
@@ -152,7 +146,7 @@ function MyGroupsTabContent() {
         </div>
       ) : (
         <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] font-bold text-center">
-          It seems you are not a member of any groups.
+          No groups found.
         </div>
       )}
     </>

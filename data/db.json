@@ -35,11 +35,8 @@
       "sex": "female",
       "birth_date": "15.07.2000",
       "tasks": [
-        "ceee",
-        "341b",
-        "5d62",
-        "d892",
-        "1f6c"
+        "1",
+        "2"
       ]
     },
     {
@@ -78,10 +75,10 @@
   "tasks": [
     {
       "id": "1",
-      "name": "Task 34",
-      "description": "Complete project report34",
-      "date": "24.12.2024",
-      "time": "10:34",
+      "name": "Task 1",
+      "description": "Complete project report",
+      "date": "05.12.2024",
+      "time": "10:00",
       "state": 1
     },
     {
@@ -139,54 +136,6 @@
       "date": "12.12.2024",
       "time": "16:30",
       "state": 0
-    },
-    {
-      "id": "656e",
-      "name": "EXPIRED DEADLINE",
-      "description": "",
-      "date": "10.02.2021",
-      "time": "23:29",
-      "state": 0
-    },
-    {
-      "id": "ceee",
-      "name": "23243",
-      "description": "34324",
-      "date": "18.03.2025",
-      "time": "23:53",
-      "state": 1
-    },
-    {
-      "id": "341b",
-      "name": "старая",
-      "description": "укее",
-      "date": "09.03.2025",
-      "time": "23:53",
-      "state": 0
-    },
-    {
-      "id": "5d62",
-      "name": "already expired",
-      "description": "",
-      "date": "02.03.2025",
-      "time": "23:57",
-      "state": 0
-    },
-    {
-      "id": "d892",
-      "name": "New task to complete",
-      "description": "will be completed",
-      "date": "27.03.2025",
-      "time": "00:19",
-      "state": 1
-    },
-    {
-      "id": "1f6c",
-      "name": "новая задача ",
-      "description": "выполнить",
-      "date": "19.03.2025",
-      "time": "00:22",
-      "state": 1
     }
   ]
 }

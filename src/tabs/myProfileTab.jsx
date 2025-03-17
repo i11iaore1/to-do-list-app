@@ -83,6 +83,7 @@ function MyProfileTabContent() {
             name: task.name,
             status: "done",
             date: task.date,
+            time: task.time,
           });
         } else {
           if (taskDate < now) {
@@ -91,26 +92,59 @@ function MyProfileTabContent() {
               name: task.name,
               status: "expired",
               date: task.date,
+              time: task.time,
             });
           }
         }
       });
 
       const total = done + expired;
-      return total > 0
-        ? {
-            done: done,
-            expired: expired,
-            completionRate: Math.round((done * 100) / total),
-            history: history,
-          }
-        : null;
+      if (total > 0) {
+        history = [...history].sort((a, b) => {
+          const dateA = new Date(
+            a.date.split(".").reverse().join("-") + "T" + a.time
+          );
+          const dateB = new Date(
+            b.date.split(".").reverse().join("-") + "T" + b.time
+          );
+          return dateB - dateA;
+        });
+
+        return {
+          done: done,
+          expired: expired,
+          completionRate: Math.round((done * 100) / total),
+          history: history,
+        };
+      } else {
+        return null;
+      }
     }
 
     if (userTasks) {
       setStatistics(calculateStatistics());
     }
   }, [userTasks]);
+
+  function logOut() {
+    localStorage.removeItem("user");
+    setCurrentUser(null);
+    navigate("/");
+  }
+
+  async function handleDelete() {
+    currentUser.tasks.forEach((taskId) => {
+      fetch(`http://localhost:8000/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+    });
+
+    fetch(`http://localhost:8000/users/${currentUser.id}`, {
+      method: "DELETE",
+    });
+
+    logOut();
+  }
 
   return (
     currentUser && (
@@ -150,18 +184,11 @@ function MyProfileTabContent() {
                   },
                   {
                     optionName: "Log out",
-                    optionFunction: () => {
-                      console.log("log out pressed");
-                      localStorage.removeItem("user");
-                      setCurrentUser(null);
-                      navigate("/");
-                    },
+                    optionFunction: logOut,
                   },
                   {
                     optionName: "Delete",
-                    optionFunction: () => {
-                      console.log("delete pressed");
-                    },
+                    optionFunction: handleDelete,
                   },
                 ]}
               />
@@ -179,8 +206,10 @@ function MyProfileTabContent() {
                   task(s) expired
                 </div>
                 <div className="text-accent text-[length:var(--normal-font-size)]">
-                  <span className="font-bold">{statistics.completionRate}</span>
-                  % completion rate
+                  <span className="font-bold">
+                    {statistics.completionRate}%
+                  </span>{" "}
+                  completion rate
                 </div>
               </div>
               <div className="flex-1 flex w-full flex-col gap-y-[var(--gap)] px-[var(--gap)] pb-[var(--gap)] tablet:pl-0 tablet:py-[var(--gap)] tablet:pr-[var(--gap)]">

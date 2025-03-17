@@ -66,7 +66,7 @@ function RegisterTabContent() {
         navigate("/myprofile");
       } catch (error) {
         setError("An error occurred while registering. Please try again.");
-        console.error(error);
+        // console.error(error);
       }
     } else {
       setError("Fill in all the required fields");
@@ -121,13 +121,13 @@ function RegisterTabContent() {
         <ChecboxSection ref={rememberMeRef} />
         <button
           onClick={handleRegister}
-          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:bg-fint active:border-fint active:text-ta select-none "
+          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:!bg-fint active:!border-fint active:!text-ta select-none "
         >
           Register
         </button>
         <Link
           to={"/signin"}
-          className="mt-[var(--gap)] mx-auto underline text-[length:var(--normal-font-size)] text-fa w-fit cursor-pointer active:text-fai select-none"
+          className="mt-[var(--gap)] mx-auto underline text-[length:var(--normal-font-size)] text-fa w-fit cursor-pointer active:!text-fai select-none"
         >
           I already have an account
         </Link>

@@ -50,8 +50,8 @@ function SignInTabContent() {
 
       navigate("/mytasks");
     } catch (error) {
-      setError("" + error);
-      console.log(error);
+      setError("An error occurred while signing in. Please try again.");
+      // console.error(error);
     }
   }
 
@@ -75,13 +75,13 @@ function SignInTabContent() {
         <ChecboxSection ref={rememberMeRef} />
         <button
           onClick={handleSignIn}
-          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:bg-fint active:border-fint active:text-ta select-none"
+          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:!bg-fint active:!border-fint active:!text-ta select-none"
         >
           Sign in
         </button>
         <Link
           to={"/register"}
-          className="mt-[var(--gap)] mx-auto underline text-[length:var(--normal-font-size)] text-fa w-fit cursor-pointer active:text-fai select-none"
+          className="mt-[var(--gap)] mx-auto underline text-[length:var(--normal-font-size)] text-fa w-fit cursor-pointer active:!text-fai select-none"
         >
           I don't have an account yet
         </Link>

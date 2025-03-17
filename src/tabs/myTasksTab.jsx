@@ -28,13 +28,18 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
     const { name, description, date, time } = formData;
 
     if (name && date && time) {
-      const formattedDate = date.split("-").reverse().join(".");
-      createTask({
-        name: name,
-        description: description,
-        date: formattedDate,
-        time: time,
-      });
+      const taskDate = new Date(date + "T" + time);
+      const now = new Date();
+
+      if (taskDate > now) {
+        const formattedDate = date.split("-").reverse().join(".");
+        createTask({
+          name: name,
+          description: description,
+          date: formattedDate,
+          time: time,
+        });
+      }
     }
   }
 
@@ -249,7 +254,7 @@ export function Panel({
             setSearchQuery("");
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:text-fa cursor-pointer"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:!text-fa cursor-pointer"
         >
           <CrossSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -305,6 +310,36 @@ function MyTasksTabContent() {
       );
       return isSorted ? prevList : sortedList;
     });
+  }, [cardObjectList]);
+
+  useEffect(() => {
+    if (!cardObjectList.length) return;
+
+    const nearestTask = cardObjectList[0];
+
+    const nextDeadline = new Date(
+      nearestTask.date.split(".").reverse().join("-") + "T" + nearestTask.time
+    );
+
+    const timeout = nextDeadline - new Date();
+    // console.log("Timeout set to: " + timeout + "ms");
+
+    const timer = setTimeout(() => {
+      // console.log("Task terminated");
+      setCardObjectList((prevTasks) =>
+        prevTasks.filter(
+          (task) =>
+            new Date(
+              task.date.split(".").reverse().join("-") + "T" + task.time
+            ) > new Date()
+        )
+      );
+    }, timeout);
+
+    return () => {
+      // console.log("Timeout cleared");
+      clearTimeout(timer);
+    };
   }, [cardObjectList]);
 
   useEffect(() => {
@@ -457,8 +492,8 @@ function MyTasksTabContent() {
           handleEdit={handleEdit}
         />
       ) : (
-        <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] text-center">
-          It seems you are out of tasks.
+        <div className="p-[var(--gap)] text-accent text-[length:var(--bigger-font-size)] font-bold text-center">
+          No tasks found.
         </div>
       )}
     </>

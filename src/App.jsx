@@ -62,7 +62,7 @@ function App() {
     },
     {
       tabName: "Group tasks",
-      path: "/group/:id",
+      path: "/groups/:id",
       tabContent: <GroupTasksTabContent />,
       isDisplayed: false,
     },
@@ -105,7 +105,7 @@ function App() {
 
           setUserGroups(userGroups);
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          console.error(error);
         }
       };
 
@@ -141,29 +141,14 @@ function App() {
             >
               <Header tabList={tabList} />
               <Routes>
-                <Route exact path="/" element={<HomeTabContent />} />
-                <Route exact path="/mytasks" element={<MyTasksTabContent />} />
-                <Route
-                  exact
-                  path="/myprofile"
-                  element={<MyProfileTabContent />}
-                />
-                <Route
-                  exact
-                  path="/mygroups"
-                  element={<MyGroupsTabContent />}
-                />
-                <Route
-                  exact
-                  path="/groups/:id"
-                  element={<GroupTasksTabContent />}
-                />
-                <Route exact path="/signin" element={<SignInTabContent />} />
-                <Route
-                  exact
-                  path="/register"
-                  element={<RegisterTabContent />}
-                />
+                {tabList.map((tabObject) => (
+                  <Route
+                    key={tabObject.tabName}
+                    exact
+                    path={tabObject.path}
+                    element={tabObject.tabContent}
+                  />
+                ))}
               </Routes>
             </UserContext.Provider>
           }

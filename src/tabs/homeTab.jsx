@@ -44,7 +44,7 @@ function HomeTabContent() {
               Guide for{" "}
               {currentUser ? (
                 <Link
-                  className="inline-flex text-nowrap px-[var(--gap)] rounded-[var(--gap)] text-ta bg-first cursor:hover:bg-fint active:bg-fint select-none indent-0"
+                  className="inline-flex text-nowrap px-[var(--gap)] rounded-[var(--gap)] text-ta bg-first cursor:hover:bg-fint active:!bg-fint select-none indent-0"
                   to={"/mytasks"}
                 >
                   My tasks
@@ -59,16 +59,17 @@ function HomeTabContent() {
         <Description
           content={
             <p>
-              The{" "}
+              {"The "}
               <span className="text-accent font-bold">
                 {theme ? "white" : "black"}
-              </span>{" "}
-              line indicates the due date of the tasks below it. The{" "}
+              </span>
+              {" line indicates the due date of the tasks below it. The "}
               <span className="text-fd font-bold">
                 {theme ? "light blue" : " dark blue"}
-              </span>{" "}
-              line indicates the end time. Deadline dates and times are listed
-              from top to bottom in ascending order.
+              </span>
+              {
+                " line indicates the end time. Deadline dates and times are listed from top to bottom in ascending order."
+              }
             </p>
           }
         />
@@ -79,7 +80,7 @@ function HomeTabContent() {
         />
         <Description
           content={
-            "The button with three dots allows you to change or delete tasks if you made a typo when creating it or didn't even want to create it"
+            "The button with three dots allows you to change or delete tasks if you made a typo when creating it or didn't even want to create it."
           }
         />
         <Description
@@ -89,7 +90,7 @@ function HomeTabContent() {
         />
         <Description
           content={
-            'To create a task you need to press the plus button in the top panel, fill in the required fields and click "Confirm". As mentioned above the only optional field is the extended description of the task.'
+            "To create a task you need to press the plus button in the top panel, fill in the required fields and confirm creation by pressing the check button. As mentioned above the only optional field is the extended description of the task."
           }
         />
         <Description
@@ -97,6 +98,29 @@ function HomeTabContent() {
             "You can use the search bar in the top panel to quickly find a task in the list by its name."
           }
         />
+        {!currentUser && (
+          <Description
+            content={
+              <p>
+                {"Join us by "}
+                <Link
+                  className="inline-flex text-nowrap p-[var(--gap)] rounded-[var(--gap)] text-ta bg-first cursor:hover:bg-fint active:!bg-fint select-none indent-0"
+                  to={"/register"}
+                >
+                  Registering
+                </Link>
+                {" and try everything yourself. Or "}
+                <Link
+                  className="inline-flex text-nowrap p-[var(--gap)] rounded-[var(--gap)] text-ta bg-first cursor:hover:bg-fint active:!bg-fint select-none indent-0"
+                  to={"/signin"}
+                >
+                  Sign in
+                </Link>
+                {" if you already have an account."}
+              </p>
+            }
+          />
+        )}
       </div>
     </>
   );
