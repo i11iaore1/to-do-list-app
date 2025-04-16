@@ -1,7 +1,11 @@
-import { Link } from "react-router-dom";
-import { useState, useContext } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
 import { FullLogoSVG } from "./SVGs";
 import { ThemeContext } from "../App";
+import { jwtDecode } from "jwt-decode";
+import createApi from "../api";
+import { REFRESH_TOKEN, ACCESS_TOKEN, THEME, USER_INFO } from "../constants";
+import { UserContext } from "../App";
 
 export function TabButton({ onClick, content, additionalStyles }) {
   return (
@@ -34,7 +38,7 @@ export function Header({ tabList }) {
     setTheme((prevTheme) => {
       const newTheme = !prevTheme;
       document.body.className = newTheme ? "dark" : "light";
-      localStorage.setItem("theme", JSON.stringify(newTheme));
+      localStorage.setItem(THEME, JSON.stringify(newTheme));
       return newTheme;
     });
   }
@@ -185,4 +189,101 @@ export function Overlay({ isShown, hideOverlay, content }) {
       {content}
     </div>
   );
+}
+
+export function ProtectedRoute({ children }) {
+  const [isAuthorized, setIsAuthorized] = useState(null);
+
+  const { storedAs, clearUser } = useContext(UserContext);
+
+  function unauthorizeAndClear() {
+    setIsAuthorized(false);
+    clearUser();
+  }
+
+  const authorize = async () => {
+    let token = null;
+    if (storedAs === 1) {
+      token = localStorage.getItem(ACCESS_TOKEN);
+    } else {
+      if (storedAs === 2) {
+        token = sessionStorage.getItem(ACCESS_TOKEN);
+      }
+    }
+    if (!token) {
+      console.log("didn`t find token or user in base.jsx");
+      unauthorizeAndClear();
+      return;
+    }
+
+    let decoded;
+    try {
+      decoded = jwtDecode(token);
+    } catch (err) {
+      console.error("Invalid token in base.jsx: ", err);
+      unauthorizeAndClear();
+      return;
+    }
+
+    const tokenExpirationTime = decoded.exp;
+    const currentTime = Date.now() / 1000;
+
+    if (tokenExpirationTime < currentTime) {
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+      if (!refreshToken) {
+        console.log("didn`t find refresh token in base.jsx");
+        unauthorizeAndClear();
+        return;
+      }
+
+      try {
+        const api = createApi(storedAs);
+        const response = await api.post("/api/token/refresh/", {
+          refresh: refreshToken,
+        });
+
+        if (response.status === 200) {
+          storedAs
+            ? localStorage.setItem(ACCESS_TOKEN, response.data.access)
+            : sessionStorage.setItem(ACCESS_TOKEN, response.data.access);
+          setIsAuthorized(true);
+        } else {
+          console.log("couldn`t refresh token in base.jsx");
+          unauthorizeAndClear();
+        }
+      } catch (error) {
+        console.error("Error refreshing token in base.jsx: ", error);
+        unauthorizeAndClear();
+      }
+    } else {
+      setIsAuthorized(true);
+    }
+  };
+
+  useEffect(() => {
+    if (storedAs === null) {
+      return;
+    } else {
+      if (storedAs === 3) {
+        console.log("user abscent");
+        unauthorizeAndClear();
+        return;
+      }
+    }
+
+    authorize().catch(() => {
+      console.error("Error during authorization in app.jsx");
+      unauthorizeAndClear();
+    });
+  }, [storedAs]);
+
+  if (isAuthorized === null) {
+    return (
+      <div className="p-[var(--gap)] mx-auto text-[length:var(--normal-font-size)] text-ta w-fit">
+        Loading...
+      </div>
+    );
+  }
+
+  return isAuthorized ? children : <Navigate to="/signin" />;
 }

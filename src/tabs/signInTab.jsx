@@ -1,57 +1,77 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ChecboxSection } from "../blocks/secondary";
+import { RememberMeSection } from "../blocks/secondary";
 import { useContext, useState, useRef } from "react";
 import { UserContext } from "../App";
+import {
+  ACCESS_TOKEN,
+  REFRESH_TOKEN,
+  USER_GROUPS,
+  USER_INFO,
+  USER_TASKS,
+} from "../constants";
+import { API_URL } from "../constants";
 
 function SignInTabContent() {
   const navigate = useNavigate();
-  const { setCurrentUser, setUserTasks, setUserGroups } =
+  const { setStoredAs, setCurrentUser, setUserTasks, setUserGroups } =
     useContext(UserContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const rememberMeRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   async function handleSignIn() {
     try {
-      let response = await fetch(`http://localhost:8000/users?email=${email}`);
-      const users = await response.json();
-      const user = users[0];
-      // console.log(user);
+      setIsLoading(true);
+      const response = await fetch(API_URL + "/api/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-      if (user.password !== password) {
-        throw Error("Invalid password");
+      if (!response.ok) {
+        setError("An error occurred while signing in. Please try again.");
+        setIsLoading(false);
+        return;
       }
+
+      const userData = await response.json();
+
+      console.log(userData);
 
       if (rememberMeRef.current.checked) {
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem(REFRESH_TOKEN, userData.refresh);
+        localStorage.setItem(ACCESS_TOKEN, userData.access);
+        localStorage.setItem(USER_INFO, JSON.stringify(userData.user));
+        localStorage.setItem(USER_TASKS, JSON.stringify(userData.tasks));
+        localStorage.setItem(USER_GROUPS, JSON.stringify(userData.groups));
+        setStoredAs(1);
+      } else {
+        sessionStorage.setItem(REFRESH_TOKEN, userData.refresh);
+        sessionStorage.setItem(ACCESS_TOKEN, userData.access);
+        sessionStorage.setItem(USER_INFO, JSON.stringify(userData.user));
+        sessionStorage.setItem(USER_TASKS, JSON.stringify(userData.tasks));
+        sessionStorage.setItem(USER_GROUPS, JSON.stringify(userData.groups));
+        setStoredAs(2);
       }
 
-      const tasksPromises = user.tasks.map((taskId) =>
-        fetch(`http://localhost:8000/tasks/${taskId}`).then((response) =>
-          response.json()
-        )
-      );
-      const tasksData = await Promise.all(tasksPromises);
-
-      fetch(`http://localhost:8000/groups?members_like=${user.id}`);
-      response = await fetch("http://localhost:8000/groups");
-      const groups = await response.json();
-      // console.log(groups);
-      const userGroups = groups.filter((group) =>
-        group.members.includes(user.id)
-      );
-      // console.log(userGroups);
-
-      setCurrentUser(user);
-      setUserTasks(tasksData);
-      setUserGroups(userGroups);
+      setCurrentUser(userData.user);
+      setUserTasks(userData.tasks);
+      setUserGroups(userData.groups);
 
       navigate("/mytasks");
     } catch (error) {
       setError("An error occurred while signing in. Please try again.");
-      // console.error(error);
+      console.error("Error during sign-in:", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -66,16 +86,17 @@ function SignInTabContent() {
           className="input w-full"
         />
         <input
-          type="text"
+          type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="input w-full"
         />
-        <ChecboxSection ref={rememberMeRef} />
+        <RememberMeSection ref={rememberMeRef} />
         <button
+          disabled={isLoading}
           onClick={handleSignIn}
-          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:!bg-fint active:!border-fint active:!text-ta select-none"
+          className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:!bg-fint active:!border-fint active:!text-ta select-none disabled:!bg-fint disabled:!border-fint disabled:!text-ta"
         >
           Sign in
         </button>
@@ -86,7 +107,7 @@ function SignInTabContent() {
           I don't have an account yet
         </Link>
         {error && (
-          <div className="mt-[var(--gap)] mx-auto text-[length:var(--normal-font-size)] text-error w-fit">
+          <div className="p-[var(--gap)] mx-auto text-[length:var(--normal-font-size)] text-error w-fit">
             {error}
           </div>
         )}

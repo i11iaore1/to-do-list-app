@@ -188,7 +188,7 @@ function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
         time: time,
       });
     } else {
-      alert("Please fill in all required fields: Name, Date, and Time.");
+      console.log("Please fill in all required fields: Name, Date, and Time.");
     }
   }
 
@@ -303,7 +303,7 @@ function TaskEditionDialogueWindow({
         time: time,
       });
     } else {
-      alert("Please fill in all required fields: Name, Date, and Time.");
+      console.log("Please fill in all required fields: Name, Date, and Time.");
     }
   }
 

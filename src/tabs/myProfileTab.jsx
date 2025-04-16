@@ -5,6 +5,8 @@ import { ProfileSVG } from "../blocks/SVGs";
 import { ButtonShowOptions } from "../blocks/buttons";
 
 import "./styles/myProfile.css";
+import { ACCESS_TOKEN, REFRESH_TOKEN, USER_INFO } from "../constants";
+import createApi from "../api";
 
 function HistoryRow({ name, status, date }) {
   return (
@@ -51,7 +53,7 @@ function HistoryTable({ historyRowObjectList }) {
                 key={index}
                 name={historyRowObject.name}
                 status={historyRowObject.status}
-                date={historyRowObject.date}
+                date={historyRowObject.date.split("-").reverse().join(".")}
               />
             );
           })}
@@ -63,36 +65,31 @@ function HistoryTable({ historyRowObjectList }) {
 
 function MyProfileTabContent() {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser, userTasks } = useContext(UserContext);
+  const { currentUser, setCurrentUser, userTasks, clearUser, storedAs } =
+    useContext(UserContext);
   const [statistics, setStatistics] = useState(null);
 
   useEffect(() => {
     function calculateStatistics() {
-      const now = new Date();
-
       let done = 0;
       let expired = 0;
       let history = [];
 
       userTasks.forEach((task) => {
-        const [day, month, year] = task.date.split(".");
-        const taskDate = new Date(`${year}-${month}-${day}T${task.time}`);
-        if (task.state) {
+        if (task.state === 1) {
           done++;
           history.push({
             name: task.name,
             status: "done",
-            date: task.date,
-            time: task.time,
+            date: task.deadline.split("T")[0],
           });
         } else {
-          if (taskDate < now) {
+          if (task.state === 2) {
             expired++;
             history.push({
               name: task.name,
               status: "expired",
-              date: task.date,
-              time: task.time,
+              date: task.deadline.split("T")[0],
             });
           }
         }
@@ -100,15 +97,15 @@ function MyProfileTabContent() {
 
       const total = done + expired;
       if (total > 0) {
-        history = [...history].sort((a, b) => {
-          const dateA = new Date(
-            a.date.split(".").reverse().join("-") + "T" + a.time
-          );
-          const dateB = new Date(
-            b.date.split(".").reverse().join("-") + "T" + b.time
-          );
-          return dateB - dateA;
-        });
+        // history = [...history].sort((a, b) => {
+        //   const dateA = new Date(
+        //     a.date.split(".").reverse().join("-") + "T" + a.time
+        //   );
+        //   const dateB = new Date(
+        //     b.date.split(".").reverse().join("-") + "T" + b.time
+        //   );
+        //   return dateB - dateA;
+        // });
 
         return {
           done: done,
@@ -127,23 +124,23 @@ function MyProfileTabContent() {
   }, [userTasks]);
 
   function logOut() {
-    localStorage.removeItem("user");
-    setCurrentUser(null);
+    clearUser();
     navigate("/");
   }
 
   async function handleDelete() {
-    currentUser.tasks.forEach((taskId) => {
-      fetch(`http://localhost:8000/tasks/${taskId}`, {
-        method: "DELETE",
-      });
-    });
+    try {
+      const api = createApi(storedAs);
+      const response = await api.delete("/api/my-profile/");
 
-    fetch(`http://localhost:8000/users/${currentUser.id}`, {
-      method: "DELETE",
-    });
-
-    logOut();
+      if (response.status === 204) {
+        logOut();
+      } else {
+        console.log("Couldn`t delete user in myProfileTab.jsx");
+      }
+    } catch (error) {
+      console.error("Error deleting user in myProfileTab.jsx: ", error);
+    }
   }
 
   return (
@@ -157,7 +154,7 @@ function MyProfileTabContent() {
               </div>
               <div className="flex-1 flex flex-col w-full gap-y-[var(--gap)] px-[var(--gap)] leading-none text-fa text-[length:var(--normal-font-size)]">
                 <div className="text-[length:var(--bigger-font-size)] font-bold leading-normal text-center [@media(min-width:32em)]:text-left">
-                  {currentUser.name}
+                  {currentUser.username}
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Email:</div>
@@ -165,11 +162,15 @@ function MyProfileTabContent() {
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Sex:</div>
-                  <div className="flex-1">{currentUser.sex}</div>
+                  <div className="flex-1">
+                    {currentUser.sex ? "male" : "female"}
+                  </div>
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Birth date:</div>
-                  <div className="flex-1">{currentUser.birth_date}</div>
+                  <div className="flex-1">
+                    {currentUser.birth_date.split("-").reverse().join(".")}
+                  </div>
                 </div>
               </div>
             </div>
