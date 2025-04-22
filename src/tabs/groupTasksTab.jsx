@@ -1,21 +1,26 @@
-import { useEffect, useRef, useState } from "react";
-import { useFetch } from "../hooks";
+import { useEffect, useRef, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
-import { ButtonAdd, ButtonClose, ButtonComplete } from "../blocks/buttons";
+import { ButtonClose } from "../blocks/buttons";
 import { Overlay } from "../blocks/base";
-import { CardList } from "../blocks/secondary";
-import { ProfileSVG, GroupSVG, CrossSVG, SearchSVG } from "../blocks/SVGs";
+import {
+  Panel,
+  TaskCreationDialogueWindow,
+  TaskEditionDialogueWindow,
+  CardList,
+} from "../blocks/secondary";
+import { ProfileSVG, GroupSVG } from "../blocks/SVGs";
+import { API_URL_WS, ACCESS_TOKEN } from "../constants";
+import { UserContext } from "../App";
+import { createApi } from "../api";
 
 function UserPreviewCard({ userInfoObject }) {
   return (
     <div className="flex flex-col gap-y-[var(--half-gap)] w-[var(--diameter)]">
       <div className="flex justify-center items-center h-[var(--diameter)] aspect-square rounded-[50%] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent">
-        {userInfoObject.picture || (
-          <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
-        )}
+        <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-accent text-center text-[length:var(--smaller-font-size)]">
-        {userInfoObject.name}
+        {userInfoObject.username}
       </div>
     </div>
   );
@@ -108,12 +113,10 @@ function UserPreviewHorizontal({ userInfoObject }) {
   return (
     <div className="flex flex-row gap-x-[var(--gap)] h-[var(--diameter)] items-center">
       <div className="flex justify-center items-center h-full aspect-square rounded-[50%] bg-third border-[length:var(--border-width)] border-solid border-accent text-accent">
-        {userInfoObject.picture || (
-          <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
-        )}
+        <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
       </div>
       <div className="whitespace-nowrap overflow-hidden text-ellipsis leading-none text-fa text-[length:var(--normal-font-size)] font-bold">
-        {userInfoObject.name}
+        {userInfoObject.username}
       </div>
     </div>
   );
@@ -149,380 +152,216 @@ function MembersDialogueWindow({ isShown, hide, userObjectList }) {
   );
 }
 
-function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    date: "",
-    time: "",
-  });
-
-  useEffect(() => {
-    if (isShown) {
-      setFormData({
-        name: "",
-        description: "",
-        date: "",
-        time: "",
-      });
-    }
-  }, [isShown]);
-
-  function buttonCreateFunction() {
-    const name = document.getElementById("taskNameInputCreate").value.trim();
-    const description = document.getElementById(
-      "taskDescriptionInputCreate"
-    ).value;
-
-    const [year, month, day] = document
-      .getElementById("dateInputCreate")
-      .value.split("-");
-    const date = `${day}.${month}.${year}`;
-    const time = document.getElementById("timeInputCreate").value;
-
-    if (name && date && time) {
-      createTask({
-        name: name,
-        description: description,
-        date: date,
-        time: time,
-      });
-    } else {
-      console.log("Please fill in all required fields: Name, Date, and Time.");
-    }
-  }
-
-  return (
-    <Overlay
-      isShown={isShown}
-      hideOverlay={hide}
-      content={
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
-        >
-          <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-second">
-            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
-              TASK CREATION
-            </p>
-            <ButtonClose onClick={hide} />
-          </div>
-          <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
-            <input
-              id="taskNameInputCreate"
-              type="text"
-              placeholder="Name"
-              className="input w-full"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-            <textarea
-              id="taskDescriptionInputCreate"
-              rows="3"
-              placeholder="Description"
-              className="input w-full resize-none flex-shrink-0"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <div className="flex flex-row gap-x-[var(--gap)]">
-              <input
-                id="timeInputCreate"
-                type="time"
-                className="input flex-1"
-                value={formData.time}
-                onChange={(e) =>
-                  setFormData({ ...formData, time: e.target.value })
-                }
-              />
-              <input
-                id="dateInputCreate"
-                type="date"
-                className="input flex-1"
-                value={formData.date}
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
-              />
-            </div>
-            <ButtonComplete
-              additionalStyles={"h-[var(--diameter)] w-full "}
-              onClick={buttonCreateFunction}
-              tooltip="Apply changes"
-            />
-          </div>
-        </div>
-      }
-    />
-  );
-}
-
-function TaskEditionDialogueWindow({
-  isShown,
-  hide,
-  cardObject,
-  applyChanges,
-}) {
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    date: "",
-    time: "",
-  });
-
-  useEffect(() => {
-    if (isShown) {
-      setFormData({
-        ...cardObject,
-        ...{ date: cardObject.date.split(".").reverse().join("-") },
-      });
-    }
-  }, [isShown]);
-
-  function buttonApplyFunction() {
-    const name = document.getElementById("taskNameInputEdit").value.trim();
-    const description = document.getElementById(
-      "taskDescriptionInputEdit"
-    ).value;
-
-    const [year, month, day] = document
-      .getElementById("dateInputEdit")
-      .value.split("-");
-    const date = `${day}.${month}.${year}`;
-    const time = document.getElementById("timeInputEdit").value;
-
-    if (name && date && time) {
-      applyChanges({
-        id: cardObject.id,
-        name: name,
-        description: description,
-        date: date,
-        time: time,
-      });
-    } else {
-      console.log("Please fill in all required fields: Name, Date, and Time.");
-    }
-  }
-
-  return (
-    <Overlay
-      isShown={isShown}
-      hideOverlay={hide}
-      content={
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
-        >
-          <div className="flex flex-row max-h-[var(--bigger-radius)] rounded-t-[50%] bg-second">
-            <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
-              TASK EDITION
-            </p>
-            <ButtonClose onClick={hide} />
-          </div>
-          <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
-            <input
-              id="taskNameInputEdit"
-              type="text"
-              placeholder="Name"
-              className="input w-full"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-            />
-            <textarea
-              id="taskDescriptionInputEdit"
-              rows="3"
-              placeholder="Description"
-              className="input w-full resize-none flex-shrink-0"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <div className="flex flex-row gap-x-[var(--gap)]">
-              <input
-                id="timeInputEdit"
-                type="time"
-                className="input flex-1"
-                value={formData.time}
-                onChange={(e) =>
-                  setFormData({ ...formData, time: e.target.value })
-                }
-              />
-              <input
-                id="dateInputEdit"
-                type="date"
-                className="input flex-1"
-                value={formData.date}
-                onChange={(e) =>
-                  setFormData({ ...formData, date: e.target.value })
-                }
-              />
-            </div>
-            <ButtonComplete
-              additionalStyles={"h-[var(--diameter)] w-full "}
-              onClick={buttonApplyFunction}
-              tooltip="Apply changes"
-            />
-          </div>
-        </div>
-      }
-    />
-  );
-}
-
-export function Panel({
-  searchQuery,
-  setSearchQuery,
-  buttonAddFunction,
-  buttonAddToolTip,
-}) {
-  const inputRef = useRef(null);
-
-  return (
-    <div className="sticky top-[var(--diameter)] inset-x-0 z-40 flex flex-row gap-x-[var(--gap)] p-[var(--gap)] mb-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-first bg-second">
-      <div className="flex flex-row flex-1">
-        <div
-          onClick={() => {
-            inputRef.current.focus();
-          }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-r-0 rounded-l-[var(--gap)]"
-        >
-          <SearchSVG additionalStyles="h-[var(--radius)]" />
-        </div>
-        <input
-          ref={inputRef}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          type="text"
-          placeholder="Search"
-          className="input border-x-0 px-0 rounded-[0] flex-1"
-        />
-        <div
-          onClick={() => {
-            setSearchQuery("");
-            inputRef.current.focus();
-          }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-l-0 cursor:hover:text-fa rounded-r-[var(--gap)] active:!text-fa cursor-pointer"
-        >
-          <CrossSVG additionalStyles="h-[var(--radius)]" />
-        </div>
-      </div>
-      <ButtonAdd onClick={buttonAddFunction} tooltip={buttonAddToolTip} />
-    </div>
-  );
-}
-
 function GroupTasksTabContent() {
   const { id } = useParams();
 
   const [groupInfo, setGroupInfo] = useState(null);
   const [users, setUsers] = useState([]);
-  const [tasks, setTasks] = useState([]);
+  const [cardObjectList, setCardObjectList] = useState([]);
+  const [filteredCards, setFilteredCards] = useState([]);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { storedAs } = useContext(UserContext);
+
+  // const [groupSocket, setGroupSocket] = useState(null);
+  const socketRef = useRef(null);
+
+  function getSortedCurrentTasks(tasks) {
+    if (tasks) {
+      const now = new Date();
+      const sortedCurrentTasks =
+        tasks.length < 2
+          ? tasks.filter((taskObject) => {
+              if (taskObject.state !== 0) return false;
+              return new Date(taskObject.deadline) > now;
+            })
+          : tasks
+              .filter((taskObject) => {
+                if (taskObject.state !== 0) return false;
+                return new Date(taskObject.deadline) > now;
+              })
+              .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+      return sortedCurrentTasks;
+    }
+  }
+
+  function handleWSMessage(data) {
+    const event = data.event;
+    if (event === "task_created") {
+      const newCardObject = data.task;
+      setCardObjectList((prevCardObjectList) =>
+        getSortedCurrentTasks([...prevCardObjectList, newCardObject])
+      );
+    } else if (event === "task_updated") {
+      const newCardObject = data.task;
+      setCardObjectList((prevCardObjectList) =>
+        getSortedCurrentTasks(
+          prevCardObjectList.map((cardObject) =>
+            cardObject.id === newCardObject.id ? newCardObject : cardObject
+          )
+        )
+      );
+    } else if (
+      event === "task_deleted" ||
+      event === "task_expired" ||
+      event === "task_completed"
+    ) {
+      setCardObjectList((prevCardObjectList) =>
+        prevCardObjectList.filter(
+          (cardObject) => cardObject.id !== data.task_id
+        )
+      );
+    } else {
+      console.error("Unknown event: ", event);
+    }
+  }
+
   useEffect(() => {
-    const fetchGroupData = async () => {
+    async function fetchGroupDataAndConnect() {
       try {
-        const groupResponse = await fetch(`http://localhost:8000/groups/${id}`);
-        const groupData = await groupResponse.json();
-        setGroupInfo(groupData);
+        const api = createApi(storedAs);
+        const response = await api.get(`/api/groups/${id}/`);
 
-        const memberPromises = groupData.members.map((memberId) =>
-          fetch(`http://localhost:8000/users/${memberId}`).then((response) =>
-            response.json()
-          )
-        );
-        const membersData = await Promise.all(memberPromises);
-        setUsers(membersData);
+        if (response.status === 200) {
+          console.log("Group info: ", response.data);
 
-        const taskPromises = groupData.tasks.map((taskId) =>
-          fetch(`http://localhost:8000/tasks/${taskId}`).then((response) =>
-            response.json()
-          )
-        );
-        const tasksData = await Promise.all(taskPromises);
-        setTasks(tasksData);
+          setGroupInfo({
+            id: response.data.id,
+            name: response.data.name,
+          });
+          setUsers(response.data.members);
+          setCardObjectList(getSortedCurrentTasks(response.data.tasks));
 
-        setIsLoading(false);
+          GroupSocketConnect();
+        } else {
+          // console.log("Couldn't get group info in groupTasksTab.jsx");
+          setError("Couldn't get group info in groupTasksTab.jsx");
+        }
       } catch (error) {
+        // console.error("Error getting group info in groupTasksTab.jsx: ", error);
+        setError("Error getting group info in groupTasksTab.jsx");
+      } finally {
         setIsLoading(false);
-        setError("Failed fetching group info");
+      }
+    }
+
+    function GroupSocketConnect() {
+      if (
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
+        socketRef.current.close();
+      }
+
+      let access;
+      if (storedAs === 1) {
+        access = localStorage.getItem(ACCESS_TOKEN);
+      } else if (storedAs === 2) {
+        access = sessionStorage.getItem(ACCESS_TOKEN);
+      }
+
+      socketRef.current = new WebSocket(
+        `${API_URL_WS}/ws/groups/${id}/?token=${access}`
+      );
+      // socketRef.current = ws;
+      // setGroupSocket(ws);
+
+      socketRef.current.onopen = () => {
+        console.log("GroupSocket opened");
+      };
+
+      socketRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("WS receive: ", data);
+        handleWSMessage(data);
+      };
+
+      socketRef.current.onclose = () => {
+        console.log("GroupSocket closed");
+      };
+    }
+
+    fetchGroupDataAndConnect();
+
+    return () => {
+      if (
+        socketRef.current &&
+        socketRef.current.readyState === WebSocket.OPEN
+      ) {
+        socketRef.current.close();
       }
     };
-
-    fetchGroupData();
   }, [id]);
-
-  useEffect(() => {
-    setTasks((prevList) => {
-      const sortedList = [...prevList].sort((a, b) => {
-        const dateA = new Date(
-          a.date.split(".").reverse().join("-") + "T" + a.time
-        );
-        const dateB = new Date(
-          b.date.split(".").reverse().join("-") + "T" + b.time
-        );
-        return dateA - dateB;
-      });
-
-      const isSorted = prevList
-        ? prevList.every((item, index) => item === sortedList[index])
-        : false;
-      return isSorted ? prevList : sortedList;
-    });
-  }, [tasks]);
 
   const [isMembersDialogueWindowShown, setIsMembersDialogueWindowShown] =
     useState(false);
-
   const [isCreationWindowShown, setIsCreationWindowShown] = useState(false);
-
   const [isEditionWindowShown, setIsEditionWindowShown] = useState(false);
   const [editedCardObject, setEditedCardObject] = useState(null);
 
-  const [searchQuery, setSearchQuery] = useState("");
+  function sendGroupSocketMessage(message) {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      console.log(message);
+      socketRef.current.send(JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
+  }
+
+  function handleComplete(id) {
+    const message = {
+      command: "complete",
+      data: id,
+    };
+    sendGroupSocketMessage(message);
+  }
 
   function handleDelete(id) {
-    setTasks(tasks.filter((cardObject) => cardObject.id !== id));
+    const message = {
+      command: "delete",
+      data: id,
+    };
+    sendGroupSocketMessage(message);
   }
 
   function handleEdit(id) {
-    setEditedCardObject(tasks.find((cardObject) => cardObject.id === id));
+    setEditedCardObject(
+      cardObjectList.find((cardObject) => cardObject.id === id)
+    );
     setIsEditionWindowShown(true);
   }
 
   function applyChanges(newCardObject) {
-    const id = newCardObject.id;
-    setTasks((prevCardObjectList) =>
-      prevCardObjectList.map((cardObject) =>
-        cardObject.id === id ? newCardObject : cardObject
-      )
-    );
+    const message = {
+      command: "update",
+      data: newCardObject,
+    };
+    sendGroupSocketMessage(message);
     setIsEditionWindowShown(false);
   }
 
-  function createTask(newCardObject) {
-    let maxId = tasks.length ? Math.max(...tasks.map((item) => item.id)) : 0;
-    setTasks([...tasks, { ...newCardObject, id: (maxId + 1).toString() }]);
+  function handleCreate(newCardObject) {
+    const message = {
+      command: "create",
+      data: newCardObject,
+    };
+    sendGroupSocketMessage(message);
     setIsCreationWindowShown(false);
   }
 
-  const [filteredCards, setFilteredCards] = useState([]);
-
   useEffect(() => {
-    tasks &&
-      setFilteredCards(
-        tasks.filter((card) =>
-          card.name.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+    if (cardObjectList) {
+      const filtered = cardObjectList.filter((card) =>
+        card.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
-  }, [tasks, searchQuery]);
+      setFilteredCards(filtered);
+    }
+  }, [cardObjectList, searchQuery]);
 
   return (
     <>
@@ -543,16 +382,16 @@ function GroupTasksTabContent() {
           userObjectList={users}
         />
       )}
-      <TaskEditionDialogueWindow
-        isShown={isEditionWindowShown}
-        hide={() => setIsEditionWindowShown(false)}
-        applyChanges={applyChanges}
-        cardObject={editedCardObject}
-      />
       <TaskCreationDialogueWindow
         isShown={isCreationWindowShown}
         hide={() => setIsCreationWindowShown(false)}
-        createTask={createTask}
+        createTask={handleCreate}
+      />
+      <TaskEditionDialogueWindow
+        isShown={isEditionWindowShown}
+        hide={() => setIsEditionWindowShown(false)}
+        cardObject={editedCardObject}
+        applyChanges={applyChanges}
       />
       {users && groupInfo && (
         <GroupDescription
@@ -570,9 +409,10 @@ function GroupTasksTabContent() {
         buttonAddFunction={() => setIsCreationWindowShown(true)}
         buttonAddToolTip={"Create task"}
       />
-      {tasks ? (
+      {cardObjectList ? (
         <CardList
           cardObjectList={filteredCards}
+          handleComplete={handleComplete}
           handleDelete={handleDelete}
           handleEdit={handleEdit}
         />

@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { useContext, useEffect, useRef, useState } from "react";
-import { CrossSVG, GroupSVG, SearchSVG } from "../blocks/SVGs";
+import { CrossSVG, SearchSVG } from "../blocks/SVGs";
 import defaultGroupImage from "../images/default-group-image.png";
-import { ButtonAdd, ButtonClose } from "../blocks/buttons";
+import { ButtonAdd, ButtonJoin, ButtonClose } from "../blocks/buttons";
 import { Overlay } from "../blocks/base";
-import { useFetch } from "../hooks";
 import { UserContext } from "../App";
+import createApi from "../api";
+import { USER_GROUPS } from "../constants";
 
-function GroupCard({ groupCardObject }) {
+function GroupCard({ groupCardObject, onLeaveGroup }) {
   return (
     <div className="grid grid-rows-[var(--bigger-radius)_1fr] aspect-square select-none">
       <div className="grid grid-cols-[1fr_var(--bigger-radius)] rounded-t-[50%] bg-second">
@@ -18,11 +19,7 @@ function GroupCard({ groupCardObject }) {
           {groupCardObject.name}
         </Link>
 
-        <ButtonClose
-          onClick={() => {
-            console.log("close pressed");
-          }}
-        />
+        <ButtonClose onClick={onLeaveGroup} />
       </div>
       <Link
         to={`/groups/${groupCardObject.id}`}
@@ -36,7 +33,23 @@ function GroupCard({ groupCardObject }) {
   );
 }
 
-function DialogueWindow({ isShown, hideOverlay }) {
+function DialogueWindow({ isShown, hideOverlay, createGroup }) {
+  const [groupName, setGroupName] = useState("");
+
+  useEffect(() => {
+    if (isShown) {
+      setGroupName("");
+    }
+  }, [isShown]);
+
+  function buttonCreateFunction() {
+    if (groupName.trim().length > 0) {
+      createGroup({ name: groupName });
+    } else {
+      console.log("Group name is empty!");
+    }
+  }
+
   return (
     <Overlay
       isShown={isShown}
@@ -53,8 +66,14 @@ function DialogueWindow({ isShown, hideOverlay }) {
             <ButtonClose onClick={hideOverlay} />
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
-            <input type="text" placeholder="Name" className="input w-full" />
-            <ButtonAdd onClick={() => console.log("Add pressed")} />
+            <input
+              type="text"
+              placeholder="Name"
+              className="input w-full"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+            />
+            <ButtonAdd onClick={buttonCreateFunction} />
           </div>
         </div>
       }
@@ -63,6 +82,7 @@ function DialogueWindow({ isShown, hideOverlay }) {
 }
 
 export function Panel({
+  onjoinGroup,
   searchQuery,
   setSearchQuery,
   buttonAddFunction,
@@ -72,6 +92,10 @@ export function Panel({
 
   return (
     <div className="sticky top-[var(--diameter)] inset-x-0 z-40 flex flex-row gap-x-[var(--gap)] p-[var(--gap)] mb-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-first bg-second">
+      <ButtonJoin
+        onClick={onjoinGroup}
+        tooltip={"Join group by id"}
+      ></ButtonJoin>
       <div className="flex flex-row flex-1">
         <div
           onClick={() => {
@@ -105,42 +129,135 @@ export function Panel({
 }
 
 function MyGroupsTabContent() {
-  const { userGroups } = useContext(UserContext);
-  const [groupList, setGroupList] = useState([]);
+  const { currentUser, storedAs, userGroups, setUserGroups } =
+    useContext(UserContext);
+
+  const [filteredGroupList, setFilteredGroupList] = useState([]);
+
+  const [overlayState, setOverlayState] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (userGroups) {
-      setGroupList(userGroups);
+      const filtered = userGroups.filter((group) =>
+        group.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredGroupList(filtered);
     }
-  }, [userGroups]);
+  }, [userGroups, searchQuery]);
 
-  const [overlayState, setOverlayState] = useState(false);
+  async function handleCreateGroup(newGroupObject) {
+    try {
+      const api = createApi(storedAs);
+      const response = await api.post(`/api/groups/`, newGroupObject);
 
-  const [searchQuery, setSearchQuery] = useState("");
+      if (response.status === 201) {
+        const updatedGroups = [...userGroups, response.data];
+        setUserGroups(updatedGroups);
 
-  function showOverlay() {
-    setOverlayState(true);
+        if (storedAs === 1) {
+          localStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+        } else {
+          if (storedAs === 2) {
+            sessionStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+          }
+        }
+        setOverlayState(false);
+      } else {
+        console.log("Couldn`t create group in myGroupsTab.jsx");
+      }
+    } catch (error) {
+      console.error("Error creating group in myGroupsTab.jsx: ", error);
+    }
   }
 
-  function hideOverlay() {
-    setOverlayState(false);
+  async function handleJoinGroup() {
+    try {
+      const groupId = await navigator.clipboard.readText();
+      console.log(`Join group with id: ${groupId}`);
+
+      const userId = currentUser.id;
+
+      const api = createApi(storedAs);
+      const response = await api.post(
+        `/api/groups/${groupId}/member/${userId}/`
+      );
+
+      if (response.status === 200) {
+        const updatedGroups = [...userGroups, response.data];
+        setUserGroups(updatedGroups);
+
+        if (storedAs === 1) {
+          localStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+        } else {
+          if (storedAs === 2) {
+            sessionStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+          }
+        }
+      } else {
+        console.log("Couldn`t join group in myGroupsTab.jsx");
+      }
+    } catch (error) {
+      console.error("Error joining group in myGroupsTab.jsx: ", error);
+    }
+  }
+
+  async function handleLeaveGroup(groupId) {
+    try {
+      const userId = currentUser.id;
+
+      const api = createApi(storedAs);
+      const response = await api.delete(
+        `/api/groups/${groupId}/member/${userId}/`
+      );
+
+      if (response.status === 204) {
+        const updatedGroups = userGroups.filter(
+          (groupObject) => groupObject.id !== groupId
+        );
+
+        setUserGroups(updatedGroups);
+
+        if (storedAs === 1) {
+          localStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+        } else {
+          if (storedAs === 2) {
+            sessionStorage.setItem(USER_GROUPS, JSON.stringify(updatedGroups));
+          }
+        }
+      } else {
+        console.log("Couldn`t leave group in myGroupsTab.jsx");
+      }
+    } catch (error) {
+      console.error("Error leaving group in myGroupsTab.jsx: ", error);
+    }
   }
 
   return (
     <>
-      <DialogueWindow isShown={overlayState} hideOverlay={hideOverlay} />
+      <DialogueWindow
+        isShown={overlayState}
+        hideOverlay={() => {
+          setOverlayState(false);
+        }}
+        createGroup={handleCreateGroup}
+      />
       <Panel
+        onjoinGroup={handleJoinGroup}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        buttonAddFunction={showOverlay}
+        buttonAddFunction={() => {
+          setOverlayState(true);
+        }}
         buttonAddToolTip={"Create group"}
       />
-      {groupList.length > 0 ? (
+      {filteredGroupList.length > 0 ? (
         <div className="grid grid-cols-1 mobile:grid-cols-[repeat(auto-fill,minmax(150px,1fr))] tablet:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] laptop:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[var(--gap)] gap-y-[var(--gap)] p-[var(--gap)] pt-0">
-          {groupList.map((groupCardObject) => (
+          {filteredGroupList.map((groupCardObject) => (
             <GroupCard
               key={groupCardObject.id}
               groupCardObject={groupCardObject}
+              onLeaveGroup={() => handleLeaveGroup(groupCardObject.id)}
             />
           ))}
         </div>
