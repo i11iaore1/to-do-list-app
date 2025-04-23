@@ -139,9 +139,9 @@ function MembersDialogueWindow({ isShown, hide, userObjectList }) {
             <ButtonClose onClick={hide} />
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
-            {userObjectList.map((userInfoObject, index) => (
+            {userObjectList.map((userInfoObject) => (
               <UserPreviewHorizontal
-                key={index}
+                key={userInfoObject.id}
                 userInfoObject={userInfoObject}
               />
             ))}

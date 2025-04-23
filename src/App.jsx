@@ -4,7 +4,6 @@ import {
   Route,
   Routes,
   useLocation,
-  useNavigate,
 } from "react-router-dom";
 import "./App.css";
 import { Header, Wrapper, Footer, ProtectedRoute } from "./blocks/base";
@@ -15,6 +14,7 @@ import MyGroupsTabContent from "./tabs/myGroupsTab";
 import GroupTasksTabContent from "./tabs/groupTasksTab";
 import SignInTabContent from "./tabs/signInTab";
 import RegisterTabContent from "./tabs/registerTab";
+import { OnlineTabContent } from "./tabs/onlineTab";
 import {
   THEME,
   USER_INFO,
@@ -63,6 +63,12 @@ function App() {
 
   const tabList = useMemo(
     () => [
+      {
+        tabName: "Online",
+        path: "/online",
+        tabContent: <ProtectedRoute children={<OnlineTabContent />} />,
+        isDisplayed: currentUser,
+      },
       {
         tabName: "Home",
         path: "/",
