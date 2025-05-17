@@ -7,7 +7,7 @@ import {
 } from "../constants";
 
 export function clearAuthorizationInfo(setters) {
-  console.log("Clearing authorization info");
+  // console.log("Clearing authorization info");
   localStorage.removeItem(REFRESH_TOKEN);
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(USER_INFO);

@@ -60,11 +60,11 @@ function HomeTabContent() {
           content={
             <p>
               {"The "}
-              <span className="text-accent font-bold">
+              <span className="text-accent font-bold" data-testid={"date-dash-color"}>
                 {theme ? "white" : "black"}
               </span>
               {" line indicates the due date of the tasks below it. The "}
-              <span className="text-fd font-bold">
+              <span className="text-fd font-bold" data-testid={"time-dash-color"}>
                 {theme ? "light blue" : " dark blue"}
               </span>
               {
@@ -101,7 +101,7 @@ function HomeTabContent() {
         {!currentUser && (
           <Description
             content={
-              <p>
+              <p data-testid="agitation-text">
                 {"Join us by "}
                 <Link
                   className="inline-flex text-nowrap p-[var(--gap)] rounded-[var(--gap)] text-ta bg-first cursor:hover:bg-fint active:!bg-fint select-none indent-0"

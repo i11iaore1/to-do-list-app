@@ -1,6 +1,6 @@
 import { useState, createContext, useEffect, useMemo } from "react";
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Route,
   Routes,
   useLocation,
@@ -68,48 +68,56 @@ function App() {
         path: "/online",
         tabContent: <ProtectedRoute children={<OnlineTabContent />} />,
         isDisplayed: currentUser,
+        testId: "online",
       },
       {
         tabName: "Home",
         path: "/",
         tabContent: <HomeTabContent />,
         isDisplayed: true,
+        testId: "home",
       },
       {
         tabName: "My tasks",
         path: "/mytasks",
         tabContent: <ProtectedRoute children={<MyTasksTabContent />} />,
         isDisplayed: currentUser,
+        testId: "my-tasks",
       },
       {
         tabName: "My profile",
         path: "/myprofile",
         tabContent: <ProtectedRoute children={<MyProfileTabContent />} />,
         isDisplayed: currentUser,
+        testId: "my-profile",
       },
       {
         tabName: "My groups",
         path: "/mygroups",
         tabContent: <ProtectedRoute children={<MyGroupsTabContent />} />,
         isDisplayed: currentUser,
+        testId: "my-groups",
       },
       {
         tabName: "Group tasks",
         path: "/groups/:id",
         tabContent: <ProtectedRoute children={<GroupTasksTabContent />} />,
         isDisplayed: false,
+        testId: "group-tasks",
       },
       {
         tabName: "Sign in",
         path: "/signin",
         tabContent: <SignInTabContent />,
         isDisplayed: !currentUser,
+        testId: "sign-in",
       },
       {
         tabName: "Register",
         path: "/register",
         tabContent: <RegisterTabContent />,
         isDisplayed: !currentUser,
+        testId: "register",
       },
     ],
     [currentUser]
@@ -120,7 +128,7 @@ function App() {
       const token = localStorage.getItem(ACCESS_TOKEN);
       const user = localStorage.getItem(USER_INFO);
       if (!token || !user) {
-        console.log("didn`t find token or user in app.jsx");
+        // console.log("didn`t find token or user in app.jsx");
         clearUser();
         setStoredAs(3);
         return;
@@ -130,7 +138,7 @@ function App() {
       try {
         decoded = jwtDecode(token);
       } catch (err) {
-        console.error("Invalid token in app.jsx: ", err);
+        // console.error("Invalid token in app.jsx: ", err);
         clearUser();
         setStoredAs(3);
         return;
@@ -142,7 +150,7 @@ function App() {
       if (tokenExpirationTime < currentTime) {
         const refreshToken = localStorage.getItem(REFRESH_TOKEN);
         if (!refreshToken) {
-          console.log("didn`t find refresh token in app.jsx");
+          // console.log("didn`t find refresh token in app.jsx");
           clearUser();
           setStoredAs(3);
           return;
@@ -157,13 +165,13 @@ function App() {
           if (response.status === 200) {
             localStorage.setItem(ACCESS_TOKEN, response.data.access);
           } else {
-            console.log("couldn`t refresh token in app.jsx");
+            // console.log("couldn`t refresh token in app.jsx");
             clearUser();
             setStoredAs(3);
             return;
           }
         } catch (error) {
-          console.error("Error refreshing token in app.jsx: ", error);
+          // console.error("Error refreshing token in app.jsx: ", error);
           clearUser();
           setStoredAs(3);
           return;
@@ -178,7 +186,7 @@ function App() {
     };
 
     authorize().catch(() => {
-      console.error("Error during authorization in app.jsx");
+      // console.error("Error during authorization in app.jsx");
       clearUser();
       setStoredAs(3);
     });
@@ -194,7 +202,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <ScrollToTop />
       <ThemeContext.Provider value={{ theme, setTheme }}>
         <Wrapper
@@ -228,7 +236,7 @@ function App() {
         />
         <Footer />
       </ThemeContext.Provider>
-    </Router>
+    </BrowserRouter>
   );
 }
 

@@ -24,7 +24,7 @@ export function Panel({
           onClick={() => {
             inputRef.current.focus();
           }}
-          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-r-0 rounded-l-[var(--gap)]"
+          className="flex p-[var(--gap)] items-center justify-center h-[var(--diameter)] w-[var(--diameter)] border-solid border-first bg-third text-placeholder border-[length:var(--border-width)] border-r-0 rounded-l-[var(--gap)] cursor-text"
         >
           <SearchSVG additionalStyles="h-[var(--radius)]" />
         </div>
@@ -37,6 +37,7 @@ export function Panel({
           className="input border-x-0 px-0 rounded-[0] flex-1"
         />
         <div
+          title="Clear"
           onClick={() => {
             setSearchQuery("");
             inputRef.current.focus();
@@ -78,7 +79,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
       const now = new Date();
 
       if (taskDate < now) {
-        console.log("Task date is in the past");
+        // console.log("Task date is in the past");
         return;
       }
       createTask({
@@ -87,7 +88,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
         deadline: `${date}T${time}:00`,
       });
     } else {
-      console.log("Please fill in all required fields: Name, Date, and Time.");
+      // console.log("Please fill in all required fields: Name, Date, and Time.");
     }
   }
 
@@ -97,6 +98,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
       hideOverlay={hide}
       content={
         <div
+          data-testid="creation-window"
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
@@ -104,7 +106,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               TASK CREATION
             </p>
-            <ButtonClose onClick={hide} />
+            <ButtonClose onClick={hide} tooltip={"Close"}/>
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
             <input
@@ -127,6 +129,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
             />
             <div className="flex flex-row gap-x-[var(--gap)]">
               <input
+                data-testid="time-input"
                 type="time"
                 className="input flex-1"
                 value={formData.time}
@@ -135,6 +138,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
                 }
               />
               <input
+                data-testid="date-input"
                 type="date"
                 className="input flex-1"
                 value={formData.date}
@@ -146,7 +150,7 @@ export function TaskCreationDialogueWindow({ isShown, hide, createTask }) {
             <ButtonComplete
               additionalStyles={"h-[var(--diameter)] w-full "}
               onClick={buttonCreateFunction}
-              tooltip="Apply changes"
+              tooltip="Confirm creation"
             />
           </div>
         </div>
@@ -179,7 +183,7 @@ export function TaskEditionDialogueWindow({
   function buttonApplyFunction() {
     if (name && date && time) {
       if (new Date(date + "T" + time) < new Date()) {
-        console.log("Task date is in the past");
+        // console.log("Task date is in the past");
         return;
       }
       applyChanges({
@@ -190,7 +194,7 @@ export function TaskEditionDialogueWindow({
         state: cardObject.state,
       });
     } else {
-      console.log("Please fill in all required fields: Name, Date, and Time.");
+      // console.log("Please fill in all required fields: Name, Date, and Time.");
     }
   }
 
@@ -200,6 +204,7 @@ export function TaskEditionDialogueWindow({
       hideOverlay={hide}
       content={
         <div
+          data-testid="edition-window"
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col max-h-full w-full max-w-[25em] flex-shrink"
         >
@@ -207,7 +212,7 @@ export function TaskEditionDialogueWindow({
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               TASK EDITION
             </p>
-            <ButtonClose onClick={hide} />
+            <ButtonClose onClick={hide} tooltip={"Close"}/>
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
             <input
@@ -230,18 +235,20 @@ export function TaskEditionDialogueWindow({
                 className="input flex-1"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
+                data-testid="time-input"
               />
               <input
                 type="date"
                 className="input flex-1"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                data-testid="date-input"
               />
             </div>
             <ButtonComplete
               additionalStyles={"h-[var(--diameter)] w-full "}
               onClick={buttonApplyFunction}
-              tooltip="Apply changes"
+              tooltip="Confirm edition"
             />
           </div>
         </div>
@@ -252,7 +259,10 @@ export function TaskEditionDialogueWindow({
 
 function DateDash({ date }) {
   return (
-    <div className="flex flex-row gap-x-[var(--gap)] w-full justify-center items-center mb-[var(--gap)] text-accent text-[length:var(--smaller-font-size)] font-bold leading-none">
+    <div
+      data-testid={"date"}
+      className="flex flex-row gap-x-[var(--gap)] w-full justify-center items-center mb-[var(--gap)] text-accent text-[length:var(--smaller-font-size)] font-bold leading-none"
+    >
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-accent"></div>
       <p>{date}</p>
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-accent"></div>
@@ -264,7 +274,7 @@ function TimeDash({ time }) {
   return (
     <div className="flex flex-row gap-x-[var(--gap)] w-full justify-center items-center mb-[var(--gap)] text-fd text-[length:var(--smaller-font-size)] font-bold leading-none">
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-fd"></div>
-      <p>{time.slice(0, 5)}</p>
+      <p>{time}</p>
       <div className="flex-1 border-b-[length:var(--border-width)] border-dashed border-fd"></div>
     </div>
   );
@@ -284,7 +294,7 @@ function Card({
   }
 
   return (
-    <div className="flex flex-col mb-[var(--gap)]">
+    <div data-testid={"card"} className="flex flex-col mb-[var(--gap)]">
       <div className="flex flex-col w-full rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-first bg-st p-[var(--gap)]">
         <div className="flex flex-row gap-x-[var(--gap)] h-[var(--diameter)]">
           <ButtonComplete
@@ -376,9 +386,9 @@ export function CardList({
           dateDashLabel = date.split("-").reverse().join(".");
         }
         return (
-          <div key={cardObject.id}>
+          <div data-testid={`card-${cardObject.id}`} key={cardObject.id}>
             {!isSameDate && <DateDash date={dateDashLabel} />}
-            {!isSameTime && <TimeDash time={time} />}
+            {!isSameTime && <TimeDash time={time.slice(0, 5)} />}
             <Card
               name={cardObject.name}
               description={cardObject.description}

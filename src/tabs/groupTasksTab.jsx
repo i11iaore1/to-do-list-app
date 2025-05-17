@@ -56,6 +56,7 @@ function GroupDescription({
           {name}
         </div>
         <div
+          data-testid="group-id-copy"
           onClick={() => {
             navigator.clipboard.writeText(id);
           }}
@@ -136,7 +137,7 @@ function MembersDialogueWindow({ isShown, hide, userObjectList }) {
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               GROUP MEMBERS
             </p>
-            <ButtonClose onClick={hide} />
+            <ButtonClose onClick={hide} tooltip={"Close"}/>
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
             {userObjectList.map((userInfoObject) => (
@@ -217,7 +218,7 @@ function GroupTasksTabContent() {
         )
       );
     } else {
-      console.error("Unknown event: ", event);
+      // console.error("Unknown event: ", event);
     }
   }
 
@@ -228,7 +229,7 @@ function GroupTasksTabContent() {
         const response = await api.get(`/api/groups/${id}/`);
 
         if (response.status === 200) {
-          console.log("Group info: ", response.data);
+          // console.log("Group info: ", response.data);
 
           setGroupInfo({
             id: response.data.id,
@@ -272,17 +273,17 @@ function GroupTasksTabContent() {
       // setGroupSocket(ws);
 
       socketRef.current.onopen = () => {
-        console.log("GroupSocket opened");
+        // console.log("GroupSocket opened");
       };
 
       socketRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("WS receive: ", data);
+        // console.log("WS receive: ", data);
         handleWSMessage(data);
       };
 
       socketRef.current.onclose = () => {
-        console.log("GroupSocket closed");
+        // console.log("GroupSocket closed");
       };
     }
 
@@ -306,10 +307,10 @@ function GroupTasksTabContent() {
 
   function sendGroupSocketMessage(message) {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      console.log(message);
+      // console.log(message);
       socketRef.current.send(JSON.stringify(message));
     } else {
-      console.error("WebSocket is not connected.");
+      // console.error("WebSocket is not connected.");
     }
   }
 

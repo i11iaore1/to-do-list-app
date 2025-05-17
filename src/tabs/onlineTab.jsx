@@ -31,7 +31,7 @@ export function OnlineTabContent() {
         prevOnlineUsers.filter((user) => user.id !== userId)
       );
     } else {
-      console.error("Unknown event: ", event);
+      // console.error("Unknown event: ", event);
     }
   }
 
@@ -42,17 +42,17 @@ export function OnlineTabContent() {
         const response = await api.get(`/api/online/`);
 
         if (response.status === 200) {
-          console.log("Online users: ", response.data);
+          // console.log("Online users: ", response.data);
 
           setOnlineUsers(response.data);
 
           AdminSocketConnect();
         } else {
-          console.log("Couldn't get online info in onlineTab.jsx");
+          // console.log("Couldn't get online info in onlineTab.jsx");
           // setError("Couldn't get online info in onlineTab.jsx");
         }
       } catch (error) {
-        console.error("Error getting online info in onlineTab.jsx: ", error);
+        // console.error("Error getting online info in onlineTab.jsx: ", error);
         // setError("Error getting online info in onlineTab.jsx");
       }
       // finally {
@@ -80,17 +80,17 @@ export function OnlineTabContent() {
       );
 
       socketRef.current.onopen = () => {
-        console.log("AdminSocket opened");
+        // console.log("AdminSocket opened");
       };
 
       socketRef.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("WS receive: ", data);
+        // console.log("WS receive: ", data);
         handleWSMessage(data);
       };
 
       socketRef.current.onclose = () => {
-        console.log("AdminSocket closed");
+        // console.log("AdminSocket closed");
       };
     }
 

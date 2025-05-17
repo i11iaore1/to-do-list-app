@@ -4,19 +4,20 @@ import { FullLogoSVG } from "./SVGs";
 import { ThemeContext } from "../App";
 import { jwtDecode } from "jwt-decode";
 import createApi from "../api";
-import { REFRESH_TOKEN, ACCESS_TOKEN, THEME, USER_INFO } from "../constants";
+import { REFRESH_TOKEN, ACCESS_TOKEN, THEME } from "../constants";
 import { UserContext } from "../App";
 
-export function TabButton({ onClick, content, additionalStyles }) {
+function TabButton({ onClick, text, testid, additionalStyles }) {
   return (
     <div
+      data-testid={testid}
       onClick={onClick}
       className={
         "flex justify-center items-center h-full text-ta  cursor:hover:bg-fint active:!bg-fint  text-[length:var(--normal-font-size)] font-bold cursor-pointer select-none " +
         additionalStyles
       }
     >
-      {content}
+      {text}
     </div>
   );
 }
@@ -24,7 +25,7 @@ export function TabButton({ onClick, content, additionalStyles }) {
 export function Header({ tabList }) {
   const [smallNavState, setSmallNavState] = useState(false);
 
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { setTheme } = useContext(ThemeContext);
 
   function toggleSmallNav() {
     setSmallNavState(!smallNavState);
@@ -84,7 +85,8 @@ export function Header({ tabList }) {
               tabObject.isDisplayed && (
                 <Link key={"f-" + index} to={tabObject.path}>
                   <TabButton
-                    content={tabObject.tabName}
+                    testid={tabObject.testId + "-full"}
+                    text={tabObject.tabName}
                     additionalStyles={"p-[var(--gap)]"}
                   />
                 </Link>
@@ -129,7 +131,8 @@ export function Header({ tabList }) {
                 tabObject.isDisplayed && (
                   <Link key={"s-" + index} to={tabObject.path}>
                     <TabButton
-                      content={tabObject.tabName}
+                      testid={tabObject.testId + "-mobile"}
+                      text={tabObject.tabName}
                       additionalStyles={"p-[var(--gap)] rounded-[var(--gap)]"}
                     />
                   </Link>
@@ -211,7 +214,7 @@ export function ProtectedRoute({ children }) {
       }
     }
     if (!token) {
-      console.log("didn`t find token or user in base.jsx");
+      // console.log("didn`t find token or user in base.jsx");
       unauthorizeAndClear();
       return;
     }
@@ -220,7 +223,7 @@ export function ProtectedRoute({ children }) {
     try {
       decoded = jwtDecode(token);
     } catch (err) {
-      console.error("Invalid token in base.jsx: ", err);
+      // console.error("Invalid token in base.jsx: ", err);
       unauthorizeAndClear();
       return;
     }
@@ -231,7 +234,7 @@ export function ProtectedRoute({ children }) {
     if (tokenExpirationTime < currentTime) {
       const refreshToken = localStorage.getItem(REFRESH_TOKEN);
       if (!refreshToken) {
-        console.log("didn`t find refresh token in base.jsx");
+        // console.log("didn`t find refresh token in base.jsx");
         unauthorizeAndClear();
         return;
       }
@@ -248,11 +251,11 @@ export function ProtectedRoute({ children }) {
             : sessionStorage.setItem(ACCESS_TOKEN, response.data.access);
           setIsAuthorized(true);
         } else {
-          console.log("couldn`t refresh token in base.jsx");
+          // console.log("couldn`t refresh token in base.jsx");
           unauthorizeAndClear();
         }
       } catch (error) {
-        console.error("Error refreshing token in base.jsx: ", error);
+        // console.error("Error refreshing token in base.jsx: ", error);
         unauthorizeAndClear();
       }
     } else {
@@ -265,14 +268,14 @@ export function ProtectedRoute({ children }) {
       return;
     } else {
       if (storedAs === 3) {
-        console.log("user abscent");
+        // console.log("user absent");
         unauthorizeAndClear();
         return;
       }
     }
 
     authorize().catch(() => {
-      console.error("Error during authorization in app.jsx");
+      // console.error("Error during authorization in app.jsx");
       unauthorizeAndClear();
     });
   }, [storedAs]);

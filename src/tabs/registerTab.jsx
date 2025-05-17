@@ -63,7 +63,7 @@ function RegisterTabContent() {
 
       const userData = await response.json();
 
-      console.log(userData);
+      // console.log(userData);
 
       if (rememberMeRef.current.checked) {
         localStorage.setItem(REFRESH_TOKEN, userData.refresh);
@@ -113,7 +113,7 @@ function RegisterTabContent() {
         <SexInputSection sex={sex} setSex={setSex} />
         <input
           type="date"
-          placeholder="Birth date"
+          data-testid={"birth-date-input"}
           value={birthDate}
           onChange={(e) => setBirthDate(e.target.value)}
           className="input w-full"
@@ -134,6 +134,7 @@ function RegisterTabContent() {
         />
         <RememberMeSection ref={rememberMeRef} />
         <button
+          data-testid="register-button"
           disabled={isLoading}
           onClick={handleRegister}
           className="flex w-full justify-center items-center h-[var(--diameter)] p-[var(--gap)] text-[length:var(--bigger-font-size)] font-bold text-first border-[length:var(--border-width)] rounded-[var(--gap)] border-solid border-first bg-third cursor:hover:bg-first cursor:hover:text-ta active:!bg-fint active:!border-fint active:!text-ta select-none disabled:!bg-fint disabled:!border-fint disabled:!text-ta"

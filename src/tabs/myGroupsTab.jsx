@@ -10,7 +10,7 @@ import { USER_GROUPS } from "../constants";
 
 function GroupCard({ groupCardObject, onLeaveGroup }) {
   return (
-    <div className="grid grid-rows-[var(--bigger-radius)_1fr] aspect-square select-none">
+    <div data-testid="group-card" className="grid grid-rows-[var(--bigger-radius)_1fr] aspect-square select-none">
       <div className="grid grid-cols-[1fr_var(--bigger-radius)] rounded-t-[50%] bg-second">
         <Link
           to={`/groups/${groupCardObject.id}`}
@@ -19,7 +19,7 @@ function GroupCard({ groupCardObject, onLeaveGroup }) {
           {groupCardObject.name}
         </Link>
 
-        <ButtonClose onClick={onLeaveGroup} />
+        <ButtonClose onClick={onLeaveGroup} tooltip={"Leave"}/>
       </div>
       <Link
         to={`/groups/${groupCardObject.id}`}
@@ -46,7 +46,7 @@ function DialogueWindow({ isShown, hideOverlay, createGroup }) {
     if (groupName.trim().length > 0) {
       createGroup({ name: groupName });
     } else {
-      console.log("Group name is empty!");
+      // console.log("Group name is empty!");
     }
   }
 
@@ -63,7 +63,7 @@ function DialogueWindow({ isShown, hideOverlay, createGroup }) {
             <p className="flex flex-1 min-w-0 w-0 justify-center items-center flex-grow  p-[var(--gap)] rounded-tl-[var(--gap)] border-[length:var(--border-width)] border-b-0 border-r-0 border-solid border-first bg-second text-fa text-[length:var(--bigger-font-size)] font-bold select-none">
               GROUP CREATION
             </p>
-            <ButtonClose onClick={hideOverlay} />
+            <ButtonClose onClick={hideOverlay} tooltip={"Close"}/>
           </div>
           <div className="flex flex-col overflow-y-auto gap-y-[var(--gap)] p-[var(--gap)] rounded-b-[var(--gap)] border-[length:var(--border-width)] border-t-0 border-solid border-first bg-second">
             <input
@@ -73,7 +73,10 @@ function DialogueWindow({ isShown, hideOverlay, createGroup }) {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
             />
-            <ButtonAdd onClick={buttonCreateFunction} />
+            <ButtonAdd
+              onClick={buttonCreateFunction}
+              tooltip="Confirm creation"
+            />
           </div>
         </div>
       }
@@ -82,7 +85,7 @@ function DialogueWindow({ isShown, hideOverlay, createGroup }) {
 }
 
 export function Panel({
-  onjoinGroup,
+  onJoinGroup,
   searchQuery,
   setSearchQuery,
   buttonAddFunction,
@@ -93,7 +96,7 @@ export function Panel({
   return (
     <div className="sticky top-[var(--diameter)] inset-x-0 z-40 flex flex-row gap-x-[var(--gap)] p-[var(--gap)] mb-[var(--gap)] border-b-[length:var(--border-width)] border-solid border-first bg-second">
       <ButtonJoin
-        onClick={onjoinGroup}
+        onClick={onJoinGroup}
         tooltip={"Join group by id"}
       ></ButtonJoin>
       <div className="flex flex-row flex-1">
@@ -114,6 +117,7 @@ export function Panel({
           className="input border-x-0 px-0 rounded-[0] flex-1"
         />
         <div
+          title="Clear"
           onClick={() => {
             setSearchQuery("");
             inputRef.current.focus();
@@ -164,17 +168,17 @@ function MyGroupsTabContent() {
         }
         setOverlayState(false);
       } else {
-        console.log("Couldn`t create group in myGroupsTab.jsx");
+        // console.log("Couldn`t create group in myGroupsTab.jsx");
       }
     } catch (error) {
-      console.error("Error creating group in myGroupsTab.jsx: ", error);
+      // console.error("Error creating group in myGroupsTab.jsx: ", error);
     }
   }
 
   async function handleJoinGroup() {
     try {
       const groupId = await navigator.clipboard.readText();
-      console.log(`Join group with id: ${groupId}`);
+      // console.log(`Join group with id: ${groupId}`);
 
       const userId = currentUser.id;
 
@@ -195,10 +199,10 @@ function MyGroupsTabContent() {
           }
         }
       } else {
-        console.log("Couldn`t join group in myGroupsTab.jsx");
+        // console.log("Couldn`t join group in myGroupsTab.jsx");
       }
     } catch (error) {
-      console.error("Error joining group in myGroupsTab.jsx: ", error);
+      // console.error("Error joining group in myGroupsTab.jsx: ", error);
     }
   }
 
@@ -226,10 +230,10 @@ function MyGroupsTabContent() {
           }
         }
       } else {
-        console.log("Couldn`t leave group in myGroupsTab.jsx");
+        // console.log("Couldn`t leave group in myGroupsTab.jsx");
       }
     } catch (error) {
-      console.error("Error leaving group in myGroupsTab.jsx: ", error);
+      // console.error("Error leaving group in myGroupsTab.jsx: ", error);
     }
   }
 
@@ -243,7 +247,7 @@ function MyGroupsTabContent() {
         createGroup={handleCreateGroup}
       />
       <Panel
-        onjoinGroup={handleJoinGroup}
+        onJoinGroup={handleJoinGroup}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         buttonAddFunction={() => {

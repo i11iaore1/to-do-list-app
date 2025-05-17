@@ -22,7 +22,7 @@ function MyTasksTabContent() {
       taskObject.id === id ? { ...taskObject, state: state } : taskObject
     );
     setUserTasks(updatedTasks);
-    console.log(`task with id ${id} changed to state ${state}`);
+    // console.log(`task with id ${id} changed to state ${state}`);
     if (storedAs === 1) {
       localStorage.setItem(USER_TASKS, JSON.stringify(updatedTasks));
     } else {
@@ -37,14 +37,14 @@ function MyTasksTabContent() {
       const currentTasks =
         userTasks.length < 2
           ? userTasks.filter((taskObject) => {
-              if (taskObject.state !== 0) return false;
-              return true;
+              return taskObject.state === 0;
+
               // return new Date(taskObject.deadline) > now;
             })
           : userTasks
               .filter((taskObject) => {
-                if (taskObject.state !== 0) return false;
-                return true;
+                return taskObject.state === 0;
+
                 // return new Date(taskObject.deadline) > now;
               })
               .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
@@ -86,9 +86,11 @@ function MyTasksTabContent() {
           new Date(nearestTask.deadline).getTime()
         ) {
           tryExpireTask(task.id);
-          if (editedCardObject.id == task.id) {
-            setEditedCardObject(null);
-            setIsEditionWindowShown(false);
+          if (editedCardObject) {
+            if (editedCardObject.id === task.id) {
+              setEditedCardObject(null);
+              setIsEditionWindowShown(false);
+            }
           }
         }
       });
@@ -121,10 +123,10 @@ function MyTasksTabContent() {
       if (response.status === 200) {
         ChangeTaskState(id, 1);
       } else {
-        console.log("Couldn`t complete task in myTasksTab.jsx");
+        // console.log("Couldn`t complete task in myTasksTab.jsx");
       }
     } catch (error) {
-      console.error("Error completing task in myTasksTab.jsx: ", error);
+      // console.error("Error completing task in myTasksTab.jsx: ", error);
     }
   }
 
@@ -145,10 +147,10 @@ function MyTasksTabContent() {
           }
         }
       } else {
-        console.log("Couldn`t delete task in myTasksTab.jsx");
+        // console.log("Couldn`t delete task in myTasksTab.jsx");
       }
     } catch (error) {
-      console.error("Error deleting task in myTasksTab.jsx: ", error);
+      // console.error("Error deleting task in myTasksTab.jsx: ", error);
     }
   }
 
@@ -183,10 +185,10 @@ function MyTasksTabContent() {
         }
         setIsEditionWindowShown(false);
       } else {
-        console.log("Couldn`t update task in myTasksTab.jsx");
+        // console.log("Couldn`t update task in myTasksTab.jsx");
       }
     } catch (error) {
-      console.error("Error updating task in myTasksTab.jsx: ", error);
+      // console.error("Error updating task in myTasksTab.jsx: ", error);
     }
   }
 
@@ -209,10 +211,10 @@ function MyTasksTabContent() {
         }
         setIsCreationWindowShown(false);
       } else {
-        console.log("Couldn`t create task in myTasksTab.jsx");
+        // console.log("Couldn`t create task in myTasksTab.jsx");
       }
     } catch (error) {
-      console.error("Error creating task in myTasksTab.jsx: ", error);
+      // console.error("Error creating task in myTasksTab.jsx: ", error);
     }
   }
 

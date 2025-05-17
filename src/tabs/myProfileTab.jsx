@@ -23,7 +23,7 @@ function HistoryRow({ name, status, date }) {
 function HistoryTable({ historyRowObjectList }) {
   return (
     <div className="relative w-full max-h-[50vh] flex-1 overflow-auto rounded-[var(--gap)] text-[length:var(--normal-font-size)]">
-      <table className="w-full table-fixed">
+      <table data-testid="history-table" className="w-full table-fixed">
         <thead className="sticky top-0 inset-x-0 bg-first text-ta font-bold ">
           <tr>
             <th
@@ -65,7 +65,7 @@ function HistoryTable({ historyRowObjectList }) {
 
 function MyProfileTabContent() {
   const navigate = useNavigate();
-  const { currentUser, setCurrentUser, userTasks, clearUser, storedAs } =
+  const { currentUser, userTasks, clearUser, storedAs } =
     useContext(UserContext);
   const [statistics, setStatistics] = useState(null);
 
@@ -136,10 +136,10 @@ function MyProfileTabContent() {
       if (response.status === 204) {
         logOut();
       } else {
-        console.log("Couldn`t delete user in myProfileTab.jsx");
+        // console.log("Couldn`t delete user in myProfileTab.jsx");
       }
     } catch (error) {
-      console.error("Error deleting user in myProfileTab.jsx: ", error);
+      // console.error("Error deleting user in myProfileTab.jsx: ", error);
     }
   }
 
@@ -153,22 +153,22 @@ function MyProfileTabContent() {
                 <ProfileSVG additionalStyles={"h-[80%] w-auto"} />
               </div>
               <div className="flex-1 flex flex-col w-full gap-y-[var(--gap)] px-[var(--gap)] leading-none text-fa text-[length:var(--normal-font-size)]">
-                <div className="text-[length:var(--bigger-font-size)] font-bold leading-normal text-center [@media(min-width:32em)]:text-left">
+                <div className="text-[length:var(--bigger-font-size)] font-bold leading-normal text-center [@media(min-width:32em)]:text-left" data-testid="username-text">
                   {currentUser.username}
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Email:</div>
-                  <div className="flex-1">{currentUser.email}</div>
+                  <div className="flex-1" data-testid="email-text">{currentUser.email}</div>
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Sex:</div>
-                  <div className="flex-1">
+                  <div className="flex-1" data-testid="sex-text">
                     {currentUser.sex ? "male" : "female"}
                   </div>
                 </div>
                 <div className="flex flex-col tablet:flex-row gap-[var(--gap)]">
                   <div className="font-bold select-none">Birth date:</div>
-                  <div className="flex-1">
+                  <div className="flex-1" data-testid="birth-date-text">
                     {currentUser.birth_date.split("-").reverse().join(".")}
                   </div>
                 </div>
@@ -180,7 +180,7 @@ function MyProfileTabContent() {
                   {
                     optionName: "Edit",
                     optionFunction: () => {
-                      console.log("edit pressed");
+                      // console.log("edit pressed");
                     },
                   },
                   {
@@ -199,15 +199,15 @@ function MyProfileTabContent() {
             <div className="flex-1 flex flex-col gap-y-[var(--gap)] tablet:flex-row tablet:gap-x-[var(--radius)] bg-third rounded-[var(--gap)] border-[length:var(--border-width)] border-solid border-first overflow-hidden">
               <div className="flex flex-col gap-y-[var(--gap)] p-[var(--gap)] pb-0 tablet:pb-[var(--gap)] tablet:pr-0 leading-none">
                 <div className="text-accent text-[length:var(--normal-font-size)]">
-                  <span className="font-bold">{statistics.done}</span> task(s)
+                  <span className="font-bold" data-testid="done-text">{statistics.done}</span> task(s)
                   done
                 </div>
                 <div className="text-accent text-[length:var(--normal-font-size)]">
-                  <span className="font-bold">{statistics.expired}</span>{" "}
+                  <span className="font-bold" data-testid="expired-text">{statistics.expired}</span>{" "}
                   task(s) expired
                 </div>
                 <div className="text-accent text-[length:var(--normal-font-size)]">
-                  <span className="font-bold">
+                  <span className="font-bold" data-testid="completion-rate-text">
                     {statistics.completionRate}%
                   </span>{" "}
                   completion rate
